@@ -10,9 +10,12 @@
   sudo: yes
   tasks:
 
-    - name: Create Tomcat web.xml
+    - name: Create Tomcat web.xml with WebDAV enabled
       template: src=web.xml.j2 dest=/etc/tomcat6/web.xml owner=root group=tomcat6 mode=0644 backup=yes 
       notify: Restart Tomcat
+
+    - name: allow WebDAV to use ROOT directory for serving files
+      file: name=/var/lib/tomcat6/webapps/ROOT state=directory owner=tomcat6 mode=0750
 
   handlers:
 
