@@ -1,20 +1,22 @@
 ---
-- hosts: external-ip:&apt
+# For Amazon EC2 hosts, use the ec2 fact
+- hosts: external-ip:&amazon
+  tasks:
+    - set_fact: external_hostname="{{ansible_ec2_public_hostname}}"
+
+# For non-EC2 hosts, use a detected external IP address
+
+- hosts: external-ip:!amazon:&apt
   sudo: yes
   tasks:
     - name: Install curl
       apt: name=curl state=present
 
-- hosts: external-ip
+- hosts: external-ip:!amazon
   tasks:
     - name: get host's external IP address
       command: curl --silent --fail http://169.254.169.254/latest/meta-data/public-ipv4
       register: host_external_ip
 
-- hosts: external-ip:&amazon
-  tasks:
-    - set_fact: external_hostname="{{ansible_ec2_public_hostname}}"
-
-- hosts: external-ip:!amazon
-  tasks:
     - set_fact: external_hostname="{{host_external_ip.stdout}}"
+
