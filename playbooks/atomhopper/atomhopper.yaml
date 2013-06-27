@@ -8,11 +8,11 @@
       file: path={{ah_install}} state=directory
 
     - name: Download AtomHopper
-      get_url: url=http://maven.research.rackspacecloud.com/content/repositories/releases/org/atomhopper/atomhopper/1.2.7/atomhopper-1.2.7.war
-            dest={{ah_install}}/atomhopper-1.2.7.war
+      get_url: url=http://maven.research.rackspacecloud.com/content/repositories/releases/org/atomhopper/ah-war/0.9.10/ah-war-0.9.10.war
+            dest={{ah_install}}/atomhopper.war
 
     - name: Unpack AtomHopper
-      command: unzip {{ah_install}}/atomhopper-1.2.7.war -d {{ah_install}} creates={{ah_install}}/META-INF
+      command: unzip {{ah_install}}/atomhopper.war -d {{ah_install}} creates={{ah_install}}/META-INF
 
     - name: Create Atomhopper configuration directory
       file: path=/etc/atomhopper state=directory
@@ -26,7 +26,7 @@
       notify: Restart Tomcat
 
     - name: create AtomHopper database directory
-      file: path=/opt/var/lib/AtomHopper state=directory owner=tomcat6
+      file: path={{ah_lib} state=directory owner=tomcat6
 
     - name: create AtomHopper log directory
       file: path={{ah_log}} state=directory owner=tomcat6
