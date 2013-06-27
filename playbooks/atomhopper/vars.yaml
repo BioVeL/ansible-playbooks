@@ -1,0 +1,4 @@
+---
+ah_install: /opt/AtomHopper
+ah_lib: /opt/var/lib/AtomHopper
+ah_log: /opt/var/log/AtomHopper

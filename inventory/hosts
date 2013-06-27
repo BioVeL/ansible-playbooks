@@ -1,0 +1,40 @@
+
+[amazon-eu-west]
+opencpu1 ansible_ssh_host=opencpu1.biovel.eu
+tavlite1 ansible_ssh_host=tavlite1.biovel.eu
+test ansible_ssh_host=ec2-54-216-50-101.eu-west-1.compute.amazonaws.com
+
+# taverna-server works, but re-running it overwrites existing info, so do not use
+# this on production nodes yet!
+[taverna-server]
+test
+
+[rserve]
+test
+
+[biovel-portal]
+test
+
+[amazon:children]
+amazon-eu-west
+
+[virt:children]
+amazon
+
+[phys:children]
+
+[apache-httpd:children]
+biovel-portal
+
+[apache-tomcat6:children]
+taverna-server
+
+[tomcat-webdav:children]
+taverna-server
+
+[mysql-server:children]
+biovel-portal
+
+[external-ip:children]
+biovel-portal
+taverna-server

@@ -1,0 +1,34 @@
+---
+- hosts: taverna-server
+  sudo: yes
+  vars_files: 
+    - vars.yaml
+  tasks:
+    - name: Create Taverna Server install directory
+      file: path=/opt/TavernaServer state=directory owner=tomcat6
+
+    - name: Download Taverna Server
+      get_url: url=http://tavlite1.biovel.eu:8080/taverna-server.war
+            dest=/opt/TavernaServer/taverna-server.war
+
+    - name: Unpack Taverna Server
+      command: unzip /opt/TavernaServer/taverna-server.war -d /opt/TavernaServer creates=/opt/TavernaServer/WEB-INF/web.xml
+
+    - name: copy Taverna Server web.xml file
+      copy: src=web.xml dest=/opt/TavernaServer/WEB-INF/web.xml backup=yes
+      notify: Restart Tomcat
+
+    - name: copy Taverna Server properties file
+      template: src=tavernaserver.properties.j2 dest=/opt/TavernaServer/WEB-INF/tavernaserver.properties backup=yes
+      notify: Restart Tomcat
+
+    - name: create Taverna Server log directory
+      file: path=/opt/var/log/TavernaServer state=directory owner=tomcat6
+
+    - name: create Taverna Server context in Tomcat
+      template: src=tserver.xml.j2 dest=/etc/tomcat6/Catalina/localhost/tserver.xml owner=tomcat6
+      notify: Restart Tomcat
+
+  handlers:
+    - name: Restart Tomcat
+      service: name=tomcat6 state=restarted

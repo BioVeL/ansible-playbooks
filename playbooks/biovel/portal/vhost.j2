@@ -1,0 +1,21 @@
+<VirtualHost *:80>
+    ServerName {{host_external_ip.stdout}}
+    ServerAdmin {{sysadmin_email}}
+  
+    # This is the tlite rails app location.
+    DocumentRoot {{portal_install}}/public
+    <Directory {{portal_install}}/public>
+        Options -MultiViews
+        AllowOverride None
+        Order allow,deny
+        Allow from all
+    </Directory>
+ 
+    ErrorLog {{portal_log}}/error.log
+ 
+    # Possible values include: debug, info, notice, warn, error, crit,
+    # alert, emerg.
+    LogLevel warn
+ 
+    CustomLog {{portal_log}}/access.log combined
+</VirtualHost>

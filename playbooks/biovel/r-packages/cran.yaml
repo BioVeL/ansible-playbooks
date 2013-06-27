@@ -1,0 +1,24 @@
+---
+- hosts: rserve:&apt
+  sudo: yes
+  tasks:
+    - name: Install PROJ
+      action: apt pkg=libproj-dev state=present
+
+    - name: Install GDAL
+      action: apt pkg=libgdal1-dev state=present
+
+    - name: Install common R packages available as Deb packages
+      action: apt pkg=r-recommended state=present
+
+- hosts: rserve
+  sudo: yes
+  tasks:
+    - name: Install R packages from CRAN
+      shell: echo "options(repos=structure(c(CRAN='{{ cran_repository }}/')));if(require({{ item }})){}else{install.packages('{{ item }}')}" | /usr/bin/R --no-save
+      with_items:
+        - popbio
+        - popdemo
+        - IPMpack
+        - rgdal
+        - raster

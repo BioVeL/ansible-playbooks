@@ -1,0 +1,6 @@
+---
+- hosts: mysql-server:&apt
+  sudo: yes
+  tasks:
+    - name: Install MySQL server
+      action: apt pkg=mysql-server state=present

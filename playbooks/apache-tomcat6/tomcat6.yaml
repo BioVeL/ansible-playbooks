@@ -1,0 +1,20 @@
+---
+- hosts: apache-tomcat6:&apt
+  sudo: yes
+  tasks:
+
+    - name: Install Tomcat 6
+      apt: pkg=tomcat6 state=present
+
+- hosts: apache-tomcat6
+  sudo: yes
+  tasks:
+
+    - name: Create Tomcat web.xml
+      template: src=web.xml.j2 dest=/etc/tomcat6/web.xml owner=root group=tomcat6 mode=0644 backup=yes 
+      notify: Restart Tomcat
+
+  handlers:
+
+    - name: Restart Tomcat
+      service: name=tomcat6 state=restarted

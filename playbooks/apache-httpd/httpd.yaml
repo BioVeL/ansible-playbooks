@@ -1,0 +1,11 @@
+---
+- hosts: apache-httpd:&apt
+  sudo: yes
+  tasks:
+  
+    - name: Install Apache web server
+      apt: pkg={{item}} state=present
+      with_items:
+        - apache2
+        - apache2-threaded-dev
+

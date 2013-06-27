@@ -1,0 +1,3 @@
+---
+portal_install: /opt/BioVeLPortal
+portal_log: /opt/var/log/BioVeLPortal

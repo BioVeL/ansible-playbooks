@@ -1,0 +1,48 @@
+# ntp.conf
+
+{% if 'virt' in group_names %}
+# From "Timekeeping in VMware Virtual Machines"
+# http://www.vmware.com/files/pdf/techpaper/Timekeeping-In-VirtualMachines.pdf
+# ---
+# Include the option tinker panic 0 at the top of your ntp.conf file.
+# By default, the NTP daemon sometimes panics and exits if the underlying clock
+# appears to be behaving erratically. This option causes the daemon to keep
+# running instead of panicking.
+# ...
+tinker panic 0
+{% endif %}
+
+# Drift file
+{% if ansible_os_family == "RedHat" %}
+driftfile /var/lib/ntp/drift
+{% else %}
+driftfile /var/lib/ntp/ntp.drift
+{% endif %}
+
+{% if ansible_os_family == "Linuxmint" %}
+# Enable this if you want statistics to be logged.
+#statsdir /var/log/ntpstats/
+
+statistics loopstats peerstats clockstats
+filegen loopstats file loopstats type day enable
+filegen peerstats file peerstats type day enable
+filegen clockstats file clockstats type day enable
+{% endif %}
+
+{% for server in ntp_hosts %}
+server {{ server }}
+{% endfor %}
+
+{% if 'phys' in group_names %}
+# Undisciplined local clock for backup if network servers are unavailable.
+# Stratum 10 to make it lower priority than external servers.
+server 127.127.1.0
+fudge  127.127.1.0 stratum 10
+{% endif %}
+
+# Restrict external access to the NTP server, but open up for local access
+# to permit ntpq, for example.
+restrict default kod nomodify notrap nopeer noquery
+restrict -6 default kod nomodify notrap nopeer noquery
+restrict 127.0.0.1 
+restrict -6 ::1

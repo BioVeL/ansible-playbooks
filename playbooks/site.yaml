@@ -1,0 +1,26 @@
+---
+- hosts: all
+  tasks:
+    - group_by: key={{ ansible_pkg_mgr }}
+
+- hosts: apt
+  sudo: yes
+  tasks:
+    - name: Update apt repository
+      apt: update_cache=yes cache_valid_time=3600
+
+- include: core/ntp/ntp.yaml
+# Everything needed for Rserve
+- include: rserve/rserve.yaml
+- include: biovel/r-packages/cran.yaml
+# Common to Taverna Server and BioVeL Portal
+- include: external-ip/external-ip.yaml
+# Everything needed for Taverna Server
+- include: unzip/unzip.yaml
+- include: apache-tomcat6/tomcat6.yaml
+- include: atomhopper/atomhopper.yaml
+- include: taverna-server/tserver.yaml
+# Everything needed for BioVeL Portal
+- include: mysql/mysql-server.yaml
+- include: apache-httpd/httpd.yaml
+- include: biovel/portal/portal.yaml

@@ -1,0 +1,8 @@
+---
+sysadmin_email: support@biovel.eu
+
+ntp_hosts:
+  - uk.pool.ntp.org
+  - europe.pool.ntp.org
+
+cran_repository: "http://www.stats.bris.ac.uk/R"

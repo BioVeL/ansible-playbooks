@@ -1,0 +1,18 @@
+Ansible configuration for BioVeL servers
+
+Install Ansible from https://github.com/ansible/ansible
+
+Run these commands to get a quick start installation:
+$ git clone https://github.com/ansible/ansible.git github-ansible
+$ source github-ansible/hacking/env-setup
+
+Setup password-less access to your hosts. You should also have password-less access to sudo on the host.
+(If not, see the Ansible documentation for additional flags).
+
+Typically, this requires the command:
+$ ssh-add <ssh-key>
+
+Ensure the inventory/hosts file contains the hosts you wish to manage.
+
+Configure the hosts:
+$ ansible-playbook -c ssh -i inventory/hosts playbooks/site.yaml
