@@ -1,4 +1,9 @@
 ---
+- hosts: amazon
+  tasks:
+    - name: Get EC2 facts
+      action: ec2_facts
+
 - hosts: all
   tasks:
     - group_by: key={{ ansible_pkg_mgr }}

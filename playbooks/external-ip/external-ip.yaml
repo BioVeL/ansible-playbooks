@@ -10,3 +10,11 @@
     - name: get host's external IP address
       command: curl --silent --fail http://169.254.169.254/latest/meta-data/public-ipv4
       register: host_external_ip
+
+- hosts: external-ip:&amazon
+  tasks:
+    - set_fact: external_hostname="{{ansible_ec2_public_hostname}}"
+
+- hosts: external-ip:!amazon
+  tasks:
+    - set_fact: external_hostname="{{host_external_ip.stdout}}"
