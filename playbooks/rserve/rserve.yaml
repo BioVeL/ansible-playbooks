@@ -56,14 +56,13 @@
 - hosts: rserve:&apt
   sudo: yes
   tasks:
-    - name: Install R base
-      action: apt pkg=r-base state=present
-
-    - name: Install R dev libraries to help when building packages
-      action: apt pkg=r-base-dev state=present
 
     - name: Install Rserve
-      action: apt pkg=r-cran-rserve state=present
+      action: apt pkg={{item}} state=present
+      with_items:
+        - r-base
+        - r-base-dev
+        - r-cran-rserve
 
 - hosts: rserve
   sudo: yes
