@@ -58,7 +58,7 @@
 
     - name: configure portal database connections
       sudo_user: www-data
-      template: src=database.yml.j2 dest={{portal_install}}/config/database.yml
+      template: src=database.yml.j2 dest={{portal_install}}/config/database.yml mode=0600
 
     - name: precompile assets
       sudo_user: www-data
