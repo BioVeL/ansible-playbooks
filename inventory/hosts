@@ -1,8 +1,15 @@
+#
+# Define your host in an appropriate "location"
+#
 
 [amazon-eu-west]
 opencpu1 ansible_ssh_host=opencpu1.biovel.eu
 tavlite1 ansible_ssh_host=tavlite1.biovel.eu
-test ansible_ssh_host=ec2-54-216-50-101.eu-west-1.compute.amazonaws.com
+test ansible_ssh_host=test.biovel.eu
+
+#
+# Add hosts to the following groups to enable services
+#
 
 # taverna-server works, but re-running it overwrites existing info, so do not use
 # this on production nodes yet!
@@ -14,6 +21,10 @@ test
 
 [biovel-portal]
 test
+
+#
+# Do not edit below here - this provides dependencies of the above groups
+#
 
 [amazon:children]
 amazon-eu-west

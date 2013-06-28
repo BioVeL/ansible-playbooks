@@ -27,7 +27,6 @@
   sudo: yes
   vars_files:
     - vars.yaml
-    - vars-database.yaml
   tasks:
     - name: Install Ruby gem bundler
       gem: name=bundler state=present
@@ -40,7 +39,7 @@
         - tlite_prod
 
     - name: Add BioVeL Portal database user
-      mysql_user: name={{db_user}} password={{db_pass}} state=present
+      mysql_user: name={{biovel_portal['db_user']}} password={{biovel_portal['db_pass']}} state=present
             "priv=tlite_prod.*:ALL/tlite_dev.*:ALL/tlite_test.*:ALL"
 
     - name: Create portal install directory
