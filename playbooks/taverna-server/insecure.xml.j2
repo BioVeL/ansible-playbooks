@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (C) 2010-2012 The University of Manchester See the file "LICENSE.txt" 
+	for license terms. -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<description>
+		The Taverna Server bean, plus supporting configuration.
+		THIS IS AN INSECURE CONFIGURATION!
+	</description>
+
+	<import resource="webappBeans.xml" />
+
+	<context:property-placeholder order="0" ignore-unresolvable="true"
+		 properties-ref="factory.config.override" />
+	<util:properties id="factory.config.override">
+		<prop key="backEndFactory">org.taverna.server.master.localworker.ForkRunFactory</prop>
+	</util:properties>
+
+	<security:http realm="${http.realmName}" create-session="never"
+		use-expressions="true">
+		<security:http-basic />
+		<security:intercept-url pattern="/"
+			requires-channel="any" access="permitAll" />
+		<security:intercept-url pattern="/rest"
+			requires-channel="any" access="permitAll" />
+		<security:intercept-url pattern="/rest/"
+			requires-channel="any" access="permitAll" />
+		<security:intercept-url pattern="/rest/policy"
+			requires-channel="any" access="permitAll" />
+		<security:intercept-url pattern="/rest/policy/"
+			requires-channel="any" access="permitAll" />
+		<security:intercept-url pattern="/services/**"
+			requires-channel="any" access="permitAll" />
+		<security:intercept-url pattern="/soap/**"
+			requires-channel="any" method="GET" access="permitAll" />
+		<security:intercept-url pattern="/soap/**"
+			requires-channel="any" method="POST" access="hasRole('ROLE_tavernauser')" />
+		<security:intercept-url pattern="/admin"
+			requires-channel="any" access="hasRole('ROLE_tavernasuperuser')" />
+		<security:intercept-url pattern="/admin/**"
+			requires-channel="any" access="hasRole('ROLE_tavernasuperuser')" />
+		<security:intercept-url pattern="/rest/**"
+			requires-channel="any" access="hasRole('ROLE_tavernauser')" />
+		<security:intercept-url pattern="/feed"
+			requires-channel="any" access="hasRole('ROLE_tavernauser')" />
+		<security:intercept-url pattern="/feed/**"
+			requires-channel="any" access="hasRole('ROLE_tavernauser')" />
+	</security:http>
+	<bean class="org.taverna.server.master.common.Uri.Rewriter"
+		autowire="byType" id="URI-Rewriter-Thunk">
+		<property name="suppressSecurity" value="true" />
+	</bean>
+	<security:authentication-manager>
+		<security:authentication-provider>
+			<security:user-service id="users">
+				<security:user name="{{taverna_server['ts_user']}}"
+					authorities="ROLE_tavernauser,ROLE_tavernasuperuser"
+					password="{{taverna_server['ts_pass']}}" />
+			</security:user-service>
+		</security:authentication-provider>
+	</security:authentication-manager>
+</beans>

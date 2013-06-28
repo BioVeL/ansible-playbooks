@@ -18,6 +18,9 @@
       copy: src=web.xml dest=/opt/TavernaServer/WEB-INF/web.xml backup=yes
       notify: Restart Tomcat
 
+    - name: copy Taverna Server insecure.xml file
+      template: src=insecure.xml.j2 dest=/opt/TavernaServer/WEB-INF/insecure.xml owner=tomcat6 mode=0600 backup=yes
+
     - name: copy Taverna Server properties file
       template: src=tavernaserver.properties.j2 dest=/opt/TavernaServer/WEB-INF/tavernaserver.properties backup=yes
       notify: Restart Tomcat

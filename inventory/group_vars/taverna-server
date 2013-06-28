@@ -1,0 +1,4 @@
+---
+taverna_server:
+  ts_user: taverna
+  ts_pass: taverna
