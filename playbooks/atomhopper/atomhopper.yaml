@@ -26,7 +26,7 @@
       notify: Restart Tomcat
 
     - name: create AtomHopper database directory
-      file: path={{ah_lib} state=directory owner=tomcat6
+      file: path={{ah_lib}} state=directory owner=tomcat6
 
     - name: create AtomHopper log directory
       file: path={{ah_log}} state=directory owner=tomcat6
