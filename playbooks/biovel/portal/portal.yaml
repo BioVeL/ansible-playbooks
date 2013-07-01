@@ -73,6 +73,15 @@
         - development
         - production
 
+    - name: setup for database completion
+      template: src=dbcreate.sh.j2 dest={{portal_install}}/dbcreate.sh owner=root mode=0700
+
+    - name: run setup for databases
+      command: "{{portal_install}}/dbcreate.sh {{item}}"
+      with_items:
+        - tlite_dev
+        - tlite_prod 
+
     # TODO - we need to ensure these daemons are started at boot time
     # we also need to only run this if the daemons are not already running
     - name: start daemons

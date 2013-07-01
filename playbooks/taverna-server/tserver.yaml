@@ -29,7 +29,7 @@
       file: path=/opt/var/log/TavernaServer state=directory owner=tomcat6
 
     - name: create Taverna Server context in Tomcat
-      template: src=tserver.xml.j2 dest=/etc/tomcat6/Catalina/localhost/tserver.xml owner=tomcat6
+      template: src=tserver.xml.j2 dest=/etc/tomcat6/Catalina/localhost/{{taverna_server['context']}}.xml owner=tomcat6
       notify: Restart Tomcat
 
   handlers:

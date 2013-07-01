@@ -81,6 +81,10 @@
       template: src=Rserv.conf.j2 dest=/etc/Rserv.conf owner=root group=root mode=0644
       notify: Restart Rserve
 
+    - name: Create Rserve password file
+      template: src=Rserv.pass.j2 dest=/etc/Rserv.pass owner=root group=root mode=0600
+      notify: Restart Rserve
+
     - name: Create Rserve init script
       copy: src=rserve-initd dest=/etc/init.d/rserve owner=root group=root mode=0755
 
