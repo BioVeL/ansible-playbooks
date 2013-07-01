@@ -83,9 +83,11 @@
         - tlite_prod 
 
     # TODO - we need to ensure these daemons are started at boot time
-    # we also need to only run this if the daemons are not already running
+    # we also need to restart them if they are running. Easiest is just to
+    # stop them start them. Stopping them if they are already stopped is OK.
     - name: start daemons
       sudo_user: www-data
+      command: rake RAILS_ENV=production daemons:stop chdir={{portal_install}}
       command: rake RAILS_ENV=production daemons:start chdir={{portal_install}}
 
     - name: install Passenger
