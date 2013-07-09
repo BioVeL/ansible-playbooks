@@ -62,6 +62,7 @@
       with_items:
         - r-base
         - r-base-dev
+        - r-recommended
         - r-cran-rserve
 
 - hosts: rserve
