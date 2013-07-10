@@ -26,7 +26,7 @@
       notify: Restart Tomcat
 
     - name: create Taverna Server log directory
-      file: path=/opt/var/log/TavernaServer state=directory owner=tomcat6
+      file: path={{server_log}} state=directory owner=tomcat6
 
     # TODO - move this to a BioVeL-specific section
     - name: Install JSON-simple JAR
