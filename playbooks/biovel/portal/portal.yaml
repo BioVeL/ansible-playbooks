@@ -48,7 +48,8 @@
     - name: install Ruby dependencies using bundle
       # this command is effectively idempotent, as it does not do anything if the dependencies
       # are already installed, and it is fast when nothing needs to be done
-      command: bundle install chdir={{portal_install}}
+      command: bundle install
+          chdir={{portal_install}}
 
     - name: configure portal database connections
       sudo_user: www-data
@@ -59,7 +60,7 @@
       # re-run it when the Git repository gets updated
       sudo_user: www-data
       command: bundle exec rake assets:precompile
-          chdir={{portal_install}} creates={{portal_install}}/application.js
+          chdir={{portal_install}} creates={{portal_install}}/public/assets/application.js
 
     - name: setup databases
       sudo_user: www-data
