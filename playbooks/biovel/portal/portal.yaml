@@ -115,9 +115,15 @@
         - passenger.load
         - passenger.conf
 
-    - name: enable Passenger module
+    - name: enable Apache Passenger module
       command: a2enmod passenger
           creates=/etc/apache2/mods-enabled/passenger.load
+      notify: restart portal
+
+    - name: enable Apache Expires module
+      # see http://guides.rubyonrails.org/asset_pipeline.html#far-future-expires-header
+      command: a2enmod expires
+          creates=/etc/apache2/mods-enabled/expires.load
       notify: restart portal
 
     - name: add Virtual Host to Apache

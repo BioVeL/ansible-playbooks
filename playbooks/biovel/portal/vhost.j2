@@ -10,6 +10,17 @@
         Order allow,deny
         Allow from all
     </Directory>
+    <Directory {{portal_install}}/public/assets>
+        # This directory contains static assets for the Rails application.
+        # CSS and JS assets have a checksum added to the filename (in Rails
+        # production mode) so we could use "1 year" but images do not have the
+        # checksum, so we keep it conservative for now. We also send an ETag,
+        # so even the once-a-day check is likely to use a cached copy. For
+        # further information, see
+        # http://guides.rubyonrails.org/asset_pipeline.html#far-future-expires-header
+        ExpiresActive On
+        ExpiresDefault "access plus 1 day"
+    </Directory>
  
     ErrorLog {{portal_log}}/error.log
  
