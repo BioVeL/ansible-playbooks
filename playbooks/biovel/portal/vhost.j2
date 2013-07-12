@@ -11,15 +11,34 @@
         Allow from all
     </Directory>
     <Directory {{portal_install}}/public/assets>
-        # This directory contains static assets for the Rails application.
-        # CSS and JS assets have a checksum added to the filename (in Rails
-        # production mode) so we could use "1 year" but images do not have the
-        # checksum, so we keep it conservative for now. We also send an ETag,
-        # so even the once-a-day check is likely to use a cached copy. For
-        # further information, see
+        # This directory contains static assets for the Rails application. See
         # http://guides.rubyonrails.org/asset_pipeline.html#far-future-expires-header
+        # ETags are not turned off as suggested in this link, as pages that
+        # suggest doing this never seem to provide a good reason.
+        #
+        # Some pages suggest that there exist browsers that ignore Expires
+        # when an ETag is present, but they do not name the browsers, and in
+        # any case this is merely less efficient, not incorrect behaviour.
+        #
+        # Other pages suggest that this is a problem when files are delivered
+        # by load balanced web servers, which each use a different ETag for the
+        # same file, but this is a general ETag problem, unrelated to its
+        # combination with Expires. And in any case, it doesn't currently
+        # apply to our setup (or to a well-designed load balancing system).
+        #
+        # On the other hand, keeping the ETag means even the once per day check
+        # is efficient, as it typically will not need to download the file.
+        # See the comments at
+        # http://www.askapache.com/htaccess/apache-speed-etags.html
+        #
         ExpiresActive On
         ExpiresDefault "access plus 1 day"
+        <FilesMatch "-[0-9a-f]{32}\.">
+            # CSS and JS files have a 32-digit hexadecimal hash in the filename.
+            # This changes whenever the contents change, allowing us to cache
+            # these files for a longer time
+            ExpiresDefault "access plus 1 year"
+        </FilesMatch>
     </Directory>
  
     ErrorLog {{portal_log}}/error.log
