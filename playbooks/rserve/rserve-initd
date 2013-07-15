@@ -21,14 +21,14 @@ case "$1" in
 	start-stop-daemon --start --oknodo --name Rserve --exec /usr/bin/R -- CMD Rserve --vanilla
 	;;
   stop)
-	start-stop-daemon --stop --oknodo --name Rserve --exec /usr/bin/R 
+	start-stop-daemon --stop --oknodo --name Rserve
 	;;
   restart)
 	$0 stop
 	$0 start
 	;;
   status)
-	start-stop-daemon --status --name Rserve --exec /usr/bin/R
+	start-stop-daemon --status --name Rserve
 	;;
   *)
 	log_success_msg "Usage: $0 {start|stop|restart}"
