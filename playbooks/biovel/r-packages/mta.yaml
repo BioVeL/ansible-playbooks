@@ -6,9 +6,24 @@
     - name: Install R packages from CRAN
       shell: echo "options(repos=structure(c(CRAN='{{ cran_repository }}/')));if(require({{ item }})){}else{install.packages('{{ item }}')}" | /usr/bin/R --no-save
       with_items:
+        - permute
+        - lattice
+        - nlme
+        - MASS
         - vegan
         - ape
-        - MASS
+        # ggplot2 dependencies
+        - plyr
+        - digest
+        - gtable
+        - reshape2
+        - stringr
+        - scales
+        - RColorBrewer
+        - dichromat
+        - colorspace
+        - labeling
+        - munsell
         - ggplot2
       notify: Restart Rserve
 
