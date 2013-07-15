@@ -1,0 +1,28 @@
+---
+- hosts: taverna-workbench:&apt
+  sudo: yes
+  tasks:
+    - name: Install Taverna Workbench dependencies
+      action: apt pkg={{item}} state=present
+      with_items:
+        - libgnome2-0
+        - graphviz
+        - openjdk-7-jre
+
+- hosts: taverna-workbench
+  sudo: yes
+  vars:
+    - install: /opt/TavernaWorkbench
+    - version: 2.4.0
+  tasks:
+    - name: Create directory for Taverna Workbench
+      file: name={{install}} state=directory
+
+    - name: Download Taverna Workbench
+      get_url: url=https://launchpadlibrarian.net/102592532/taverna-workbench-{{version}}.tar.gz
+            dest={{install}}/taverna-workbench-{{version}}.tar.gz
+
+    - name: Unpack Taverna Workbench
+      command: tar zxfv taverna-workbench-{{version}}.tar.gz
+            chdir={{install}}
+            creates={{install}}/taverna-workbench-{{version}}/taverna.sh

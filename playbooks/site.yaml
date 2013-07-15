@@ -21,6 +21,8 @@
 - include: biovel/r-packages/mpm.yaml
 - include: biovel/r-packages/mta.yaml
 - include: biovel/r-packages/psw.yaml
+# Taverna Workbench
+- include: taverna-workbench/workbench.yaml
 # Common to Taverna Server and BioVeL Portal
 - include: external-ip/external-ip.yaml
 # Everything needed for Taverna Server
