@@ -17,3 +17,8 @@
       with_items:
         - rgdal
         - raster
+      notify: Restart Rserve
+
+  handlers:
+    - name: Restart Rserve
+      service: name=rserve state=restarted

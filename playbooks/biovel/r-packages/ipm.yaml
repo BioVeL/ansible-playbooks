@@ -7,3 +7,8 @@
       shell: echo "options(repos=structure(c(CRAN='{{ cran_repository }}/')));if(require({{ item }})){}else{install.packages('{{ item }}')}" | /usr/bin/R --no-save
       with_items:
         - IPMpack
+      notify: Restart Rserve
+
+  handlers:
+    - name: Restart Rserve
+      service: name=rserve state=restarted

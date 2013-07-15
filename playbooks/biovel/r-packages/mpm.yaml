@@ -8,3 +8,8 @@
       with_items:
         - popbio
         - popdemo
+      notify: Restart Rserve
+
+  handlers:
+    - name: Restart Rserve
+      service: name=rserve state=restarted
