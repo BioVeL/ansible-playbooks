@@ -7,7 +7,6 @@
       with_items:
         - libgnome2-0
         - graphviz
-        - openjdk-7-jre
 
 - hosts: taverna-workbench
   sudo: yes

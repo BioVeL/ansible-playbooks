@@ -22,6 +22,7 @@
 - include: biovel/r-packages/mta.yaml
 - include: biovel/r-packages/psw.yaml
 # Taverna Workbench
+- include: oracle-java/jre.yaml
 - include: taverna-workbench/workbench.yaml
 # Common to Taverna Server and BioVeL Portal
 - include: external-ip/external-ip.yaml
