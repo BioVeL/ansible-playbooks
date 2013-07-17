@@ -3,16 +3,12 @@
 #
 
 [amazon-eu-west]
-opencpu1 ansible_ssh_host=opencpu1.biovel.eu
-tavlite1 ansible_ssh_host=tavlite1.biovel.eu
 test ansible_ssh_host=test.biovel.eu
 
 #
 # Add hosts to the following groups to enable services
 #
 
-# taverna-server works, but re-running it overwrites existing info, so do not use
-# this on production nodes yet!
 [taverna-server]
 test
 
@@ -21,6 +17,9 @@ test
 
 [biovel-portal]
 test
+
+[taverna-workbench]
+
 
 #
 # Indicate whether groups contain physical or virtual machines
