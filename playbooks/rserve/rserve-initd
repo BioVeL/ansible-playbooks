@@ -8,8 +8,8 @@
 # Required-Stop:     $local_fs $remote_fs $network
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Start Rserve.
-# Description:       Start the Rserve service.
+# Short-Description: Manage Rserve.
+# Description:       Manage the Rserve service.
 ### END INIT INFO
 
 set -e

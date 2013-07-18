@@ -89,6 +89,11 @@
     - name: Create Rserve init script
       copy: src=rserve-initd dest=/etc/init.d/rserve owner=root group=root mode=0755
 
+    # The handler for service enabled on Ubuntu 12.04 using update-rc.d is broken.
+    # It doesn't ensure the links are created for enable to work, and it's parsing
+    # of the output for update-rc.d is too specific to one version.
+    #- name: Start Rserve on reboot
+    #  service: name=rserve enabled=yes
   handlers:
     - name: Restart Rserve
       service: name=rserve state=restarted
@@ -100,3 +105,17 @@
   tasks:
     - name: Ensure Rserve is running
       service: name=rserve state=started
+
+# For systems that use update-rc.d, run the command manually to enable starting on reboot
+- hosts: rserve:&apt
+  sudo: yes
+  tasks:
+    - name: Start Rserve on reboot
+      command: update-rc.d rserve defaults
+
+# For other systems, use the service module.
+- hosts: rserve:!apt
+  sudo: yes
+  tasks:
+    - name: Start Rserve on reboot
+      service: name=rserve enabled=yes
