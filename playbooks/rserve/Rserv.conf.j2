@@ -6,6 +6,11 @@ encoding utf8
 #
 pwdfile /etc/Rserv.pass
 
+# Require users to provide a password, but not in plaintext
+#
+auth required
+plaintext disable
+
 # Read the password file at startup only, which is more efficient than
 # reading it for each client connection. It requires a restart whenever the
 # password file changes, but 1) we usually only have a single user account
@@ -34,3 +39,6 @@ su client
 gid {{ rserve_id.stdout.split(':')[1] }}
 uid {{ rserve_id.stdout.split(':')[0] }}
 
+# Use "remote (disable|enable)" to (dis)allow access to remote clients
+#
+remote {% if 'rserve-remote' in group_names %}enable{% else %}disable{% endif %}

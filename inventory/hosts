@@ -12,8 +12,12 @@ test ansible_ssh_host=test.biovel.eu
 [taverna-server]
 test
 
-[rserve]
+# Rserve, accessible only to local clients
+[rserve-local]
 test
+
+# Rserve, accessible to remote network clients
+[rserve-remote]
 
 [biovel-portal]
 test
@@ -51,6 +55,10 @@ taverna-server
 
 [mysql-server:children]
 biovel-portal
+
+[rserve:children]
+rserve-local
+rserve-remote
 
 [external-ip:children]
 biovel-portal
