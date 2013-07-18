@@ -18,7 +18,7 @@ PATH=/bin:/usr/bin:/sbin:/usr/sbin
 
 case "$1" in
   start)
-	start-stop-daemon --start --oknodo --name Rserve --exec /usr/bin/R -- CMD Rserve --vanilla
+	start-stop-daemon --start --oknodo --name Rserve --exec /usr/bin/R -- CMD Rserve --vanilla > /var/log/rserve 2>&1
 	;;
   stop)
 	start-stop-daemon --stop --oknodo --name Rserve

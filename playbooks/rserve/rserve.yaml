@@ -88,6 +88,7 @@
 
     - name: Create Rserve init script
       copy: src=rserve-initd dest=/etc/init.d/rserve owner=root group=root mode=0755
+      notify: Restart Rserve
 
     # The handler for service enabled on Ubuntu 12.04 using update-rc.d is broken.
     # It doesn't ensure the links are created for enable to work, and it's parsing
