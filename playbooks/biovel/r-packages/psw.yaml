@@ -19,8 +19,8 @@
         - sp
         - rgdal
         - raster
-      notify: Restart Rserve
+      notify: R changed
 
   handlers:
-    - name: Restart Rserve
-      service: name=rserve state=restarted
+    - name: R changed
+      set_fact: r_changed=True

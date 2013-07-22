@@ -1,58 +1,4 @@
 ---
-- hosts: rserve
-  tasks:
-    - group_by: key=rserveOn{{ansible_distribution}}
-
-# On Ubuntu 12.04 ("precise") the standard repositories provide R 2.14
-# We require R 2.15, because e.g. [package popbio] requires [package quadprog] requires [R 2.15]
-# Up-to-date packages are maintained in a separate repository, which we add here.
-# The Ansible apt_repository module requires the apt-add-repository command from 
-# package python-software-properties
-- hosts: rserveOnUbuntu
-  sudo: yes
-  tasks:
-    - name: Add package python-software-properties
-      apt: pkg=python-software-properties state=present
-
-    - name: Add Ubuntu repository for R
-      apt_repository: "repo='deb {{cran_repository}}/bin/linux/ubuntu {{ansible_distribution_release}}/'"
-      notify: Update apt repository
-
-    - name: Add repository key
-      apt_key: "id=E084DAB9 url=http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0xE084DAB9 state=present"
-      notify: Update apt repository
-
-  handlers:
-    - name: Update apt repository
-      apt: update_cache=yes
-
-# Linux Mint is a version of Ubuntu, but we need to translate the distribution names.
-# We can't support the distributions between Isadora and Maya because the dependency liblzma[1-5]
-# changed its name rapidly during these versions of the OS - Isadora requires liblzma1, Maya
-# requires liblzma5, and the intermediate OS's require intermediate versions of liblzma
-- hosts: rserveOnLinuxmint
-  sudo: yes
-  vars_files:
-    - [ "mint_{{ansible_distribution_release}}.yaml", "mint_default.yaml" ]
-  tasks:
-    - name: Add package python-software-properties
-      when: ubuntu_dist != "none"
-      apt: pkg=python-software-properties state=present
-
-    - name: Add Ubuntu repository for R
-      when: ubuntu_dist != "none"
-      apt_repository: "repo='deb {{cran_repository}}/bin/linux/ubuntu {{ubuntu_dist}}/'"
-      notify: Update apt repository
-
-    - name: Add repository key
-      when: ubuntu_dist != "none"
-      apt_key: "id=E084DAB9 url=http://keyserver.ubuntu.com/pks/lookup?op=get&fingerprint=on&search=0xE084DAB9 state=present"
-      notify: Update apt repository
-
-  handlers:
-    - name: Update apt repository
-      apt: update_cache=yes
-
 - hosts: rserve:&apt
   sudo: yes
   tasks:
@@ -60,9 +6,6 @@
     - name: Install Rserve
       action: apt pkg={{item}} state=present
       with_items:
-        - r-base
-        - r-base-dev
-        - r-recommended
         - r-cran-rserve
 
 - hosts: rserve
@@ -97,13 +40,18 @@
     #  service: name=rserve enabled=yes
   handlers:
     - name: Restart Rserve
-      service: name=rserve state=restarted
+      set_fact: r_changed=True
 
-# This is run as a separate play to allow the restart handler to run first, if required
-# Otherwise, we can get a start-stop-start bounce
 - hosts: rserve
   sudo: yes
   tasks:
+    - name: Restart R server
+      service: name=rserve state=stopped
+      when: r_changed
+
+    # If R changed, these two commands perform a restart of the R server. If R
+    # did not change, then we simply ensure that the R server is running and
+    # start if it not.
     - name: Ensure Rserve is running
       service: name=rserve state=started
 

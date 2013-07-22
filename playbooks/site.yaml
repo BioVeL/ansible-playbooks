@@ -16,11 +16,12 @@
 
 - include: core/ntp/ntp.yaml
 # Everything needed for Rserve
-- include: rserve/rserve.yaml
+- include: rserve/rbase.yaml
 - include: biovel/r-packages/ipm.yaml
 - include: biovel/r-packages/mpm.yaml
 - include: biovel/r-packages/mta.yaml
 - include: biovel/r-packages/psw.yaml
+- include: rserve/rserve.yaml
 # Taverna Workbench
 - include: oracle-java/jre.yaml
 - include: taverna-workbench/workbench.yaml
