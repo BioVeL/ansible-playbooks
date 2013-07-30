@@ -15,12 +15,14 @@
       apt: update_cache=yes cache_valid_time=3600
 
 - include: core/ntp/ntp.yaml
-# Everything needed for Rserve
+# Everything needed for Rserve and workflow dependencies
+# Currently, the workflow dependencies are between r-base and rserve
+# so that R packages exist when Rserve is started
 - include: rserve/rbase.yaml
-- include: biovel/r-packages/ipm.yaml
-- include: biovel/r-packages/mpm.yaml
-- include: biovel/r-packages/mta.yaml
-- include: biovel/r-packages/psw.yaml
+- include: biovel/workflows/ipm.yaml
+- include: biovel/workflows/mpm.yaml
+- include: biovel/workflows/mta.yaml
+- include: biovel/workflows/psw.yaml
 - include: rserve/rserve.yaml
 # Taverna Workbench
 - include: oracle-java/jre.yaml
