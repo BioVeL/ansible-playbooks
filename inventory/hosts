@@ -24,6 +24,8 @@ test
 
 [taverna-workbench]
 
+[google-refine]
+
 
 #
 # Indicate whether groups contain physical or virtual machines
@@ -48,6 +50,7 @@ biovel-portal
 taverna-server
 
 [oracle-java-jre:children]
+google-refine
 taverna-workbench
 
 [tomcat-webdav:children]

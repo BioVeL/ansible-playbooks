@@ -1,0 +1,24 @@
+---
+- hosts: google-refine
+  vars:
+    google_refine_install: "/opt/GoogleRefine"
+  sudo: yes
+  tasks:
+    - name: Create a Refine group
+      group: name=refine system=yes state=present
+
+    - name: Create a Refine user account
+      user: name=refine comment="Refine service" group=refine system=yes createhome=yes state=present
+
+    - name: Create Google Refine install directory
+      file: path={{google_refine_install}} state=directory owner=refine
+
+    - name: Download Google Refine with BioVeL plugin
+      sudo_user: refine
+      get_url: url=http://ww2.bgbm.org/biovel/public/refine/google-refine-2.6.0-r2602.tar.gz
+            dest={{google_refine_install}}/google-refine-2.6.0-r2602.tar.gz
+
+    - name: Unpack Google Refine
+      sudo_user: refine
+      command: tar --extract --gunzip --directory={{google_refine_install}} --file={{google_refine_install}}/google-refine-2.6.0-r2602.tar.gz
+            creates={{google_refine_install}}/WEB-INF/web.xml
