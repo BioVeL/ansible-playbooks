@@ -60,6 +60,9 @@ biovel-portal
 rserve-local
 rserve-remote
 
+[rbase:children]
+rserve
+
 [external-ip:children]
 biovel-portal
 taverna-server
