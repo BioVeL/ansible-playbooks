@@ -2,13 +2,16 @@
 - hosts: google-refine
   vars:
     google_refine_install: "/opt/GoogleRefine"
+    google_refine_log: "/opt/var/GoogleRefine/log"
+    google_refine_data: "/opt/var/GoogleRefine/data"
+    refine_changed: 
   sudo: yes
   tasks:
     - name: Create a Refine group
       group: name=refine system=yes state=present
 
     - name: Create a Refine user account
-      user: name=refine comment="Refine service" group=refine system=yes createhome=yes state=present
+      user: name=refine comment="Refine service" group=refine system=yes createhome=no state=present
 
     - name: Create Google Refine install directory
       file: path={{google_refine_install}} state=directory owner=refine
@@ -21,4 +24,39 @@
     - name: Unpack Google Refine
       sudo_user: refine
       command: tar --extract --gunzip --directory={{google_refine_install}} --file={{google_refine_install}}/google-refine-2.6.0-r2602.tar.gz
-            creates={{google_refine_install}}/WEB-INF/web.xml
+            creates={{google_refine_install}}/google-refine-2.6.0/refine
+
+    - name: create Google Refine log directory
+      file: path={{google_refine_log}} state=directory owner=refine
+
+    - name: create Google Refine data directory
+      file: path={{google_refine_data}} state=directory owner=refine
+
+    - name: setup Google Refine init script
+      template: src=refine-initd.j2 dest=/etc/init.d/refine owner=root group=root mode=0755
+
+  handlers:
+    - name: Restart Google Refine
+      # actually, just stop service, as the start below will restart it
+      service: name=refine state=stopped
+
+# For systems that use update-rc.d, run the command manually to enable starting on reboot
+- hosts: google-refine:&apt
+  sudo: yes
+  tasks:
+    - name: Start Google Refine on reboot
+      command: update-rc.d refine defaults
+
+# For other systems, use the service module.
+- hosts: google-refine:!apt
+  sudo: yes
+  tasks:
+    - name: Start Google Refine on reboot
+      service: name=refine enabled=yes
+
+- hosts: google-refine
+  sudo: yes
+  tasks:
+    - name: Start Google Refine service
+      service: name=refine state=started
+

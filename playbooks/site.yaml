@@ -27,8 +27,6 @@
 # Taverna Workbench
 - include: oracle-java/jre.yaml
 - include: taverna-workbench/workbench.yaml
-# Google Refine
-- include: google/refine/google-refine.yaml
 # Common to Taverna Server and BioVeL Portal
 - include: external-ip/external-ip.yaml
 # Everything needed for Taverna Server
@@ -36,6 +34,9 @@
 - include: apache-tomcat6/tomcat6.yaml
 - include: atomhopper/atomhopper.yaml
 - include: taverna-server/tserver.yaml
+# Everything needed for DRW workflow
+- include: google/refine/refine.yaml
+- include: biovel/workflows/drw.yaml
 # Everything needed for BioVeL Portal
 - include: mysql/mysql-server.yaml
 - include: apache-httpd/httpd.yaml

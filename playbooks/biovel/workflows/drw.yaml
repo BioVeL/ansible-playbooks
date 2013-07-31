@@ -1,0 +1,8 @@
+---
+- hosts: taverna-server
+  sudo: yes
+  tasks:
+    # TODO - need to use taverna-server vars for destination
+    - name: Install Data Refinement Workflow dependencies
+      get_url: url=http://www.myexperiment.org/files/814/download/DCWorkflow.jar
+            dest=/opt/TavernaServer/WEB-INF/classes/util/taverna-commandline-2.4.1i-1.0.2/lib/DCWorkflow.jar

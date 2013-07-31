@@ -1,0 +1,66 @@
+#!/bin/sh
+#
+# /etc/init.d/refine -- startup script for the Google Refine service
+#
+### BEGIN INIT INFO
+# Provides:          refine
+# Required-Start:    $local_fs $remote_fs $network
+# Required-Stop:     $local_fs $remote_fs $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Manage Google Refine.
+# Description:       Manage the Google Refine service.
+### END INIT INFO
+
+
+. /lib/lsb/init-functions
+
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+REFINE_INSTALL={{google_refine_install}}/google-refine-2.6.0
+REFINE_LOG={{google_refine_log}}
+REFINE_DATA={{google_refine_data}}
+
+case "$1" in
+  start)
+    curl -s -S http://localhost:3333/ > /dev/null 2>&1
+    if [ "$?" = "7" ] ; then
+      # not running, so start it
+      # -i 0.0.0.0 ensures we are visible on all network interfaces,
+      # to allow clients to connect remotely
+      su - refine -c "${REFINE_INSTALL}/refine -i 0.0.0.0 \
+            -w ${REFINE_INSTALL}/main/webapp -d ${REFINE_DATA} run" \
+            > ${REFINE_LOG}/refine.out 2>&1 &
+      echo "$!" > ${REFINE_LOG}/refine.pid
+      log_success_msg "Starting Refine"
+    else
+      log_warning_msg "Refine already running"
+    fi
+    ;;
+  stop)
+    if [ -r ${REFINE_LOG}/refine.pid ] ; then
+      pid=`cat ${REFINE_LOG}/refine.pid`
+      kill ${pid}
+      wait ${pid}
+      rm ${REFINE_LOG}/refine.pid
+      log_success_msg "Stopping Refine"
+    else
+      log_warning_msg "Refine not running"
+    fi
+    ;;
+  restart)
+    $0 stop
+    $0 start
+    ;;
+  status)
+    curl -s -S http://localhost:3333/ > /dev/null 2>&1
+    if [ "$?" = "7" ] ; then
+      exit 1
+    fi
+    ;;
+  *)
+    log_success_msg "Usage: $0 {start|stop|restart}"
+    exit 1
+    ;;
+esac
+
+exit 0
