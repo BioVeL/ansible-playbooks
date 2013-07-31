@@ -2,7 +2,8 @@
 - hosts: google-refine
   vars:
     google_refine_install: "/opt/GoogleRefine"
-    google_refine_log: "/opt/var/GoogleRefine/log"
+    google_refine_home: "/opt/var/GoogleRefine"
+    google_refine_log: "/opt/var/GoogleRefine"
     google_refine_data: "/opt/var/GoogleRefine/data"
     refine_changed: 
   sudo: yes
@@ -11,7 +12,10 @@
       group: name=refine system=yes state=present
 
     - name: Create a Refine user account
-      user: name=refine comment="Refine service" group=refine system=yes createhome=no state=present
+      user: name=refine comment="Refine service" group=refine system=yes home={{google_refine_home}} state=present
+
+    - name: create Google Refine home directory
+      file: path={{google_refine_home}} state=directory owner=refine
 
     - name: Create Google Refine install directory
       file: path={{google_refine_install}} state=directory owner=refine
@@ -25,6 +29,10 @@
       sudo_user: refine
       command: tar --extract --gunzip --directory={{google_refine_install}} --file={{google_refine_install}}/google-refine-2.6.0-r2602.tar.gz
             creates={{google_refine_install}}/google-refine-2.6.0/refine
+
+    - name: Create refine start script
+      template: src=start-refine.j2 dest={{google_refine_install}}/google-refine-2.6.0/start-refine
+            owner=refine mode=0755
 
     - name: create Google Refine log directory
       file: path={{google_refine_log}} state=directory owner=refine

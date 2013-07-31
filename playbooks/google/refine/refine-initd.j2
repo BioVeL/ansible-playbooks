@@ -15,34 +15,34 @@
 
 . /lib/lsb/init-functions
 
+if [ -z "$HOME" ] ; then
+  HOME={{google_refine_home}}
+  export HOME
+fi
 PATH=/bin:/usr/bin:/sbin:/usr/sbin
 REFINE_INSTALL={{google_refine_install}}/google-refine-2.6.0
 REFINE_LOG={{google_refine_log}}
-REFINE_DATA={{google_refine_data}}
 
 case "$1" in
   start)
     curl -s -S http://localhost:3333/ > /dev/null 2>&1
     if [ "$?" = "7" ] ; then
       # not running, so start it
+      # 
       # -i 0.0.0.0 ensures we are visible on all network interfaces,
       # to allow clients to connect remotely
-      su - refine -c "${REFINE_INSTALL}/refine -i 0.0.0.0 \
-            -w ${REFINE_INSTALL}/main/webapp -d ${REFINE_DATA} run" \
-            > ${REFINE_LOG}/refine.out 2>&1 &
-      echo "$!" > ${REFINE_LOG}/refine.pid
-      log_success_msg "Starting Refine"
+      start-stop-daemon --start --oknodo --background --make-pidfile \
+            --pidfile ${REFINE_LOG}/refine.pid --chuid refine --exec \
+            ${REFINE_INSTALL}/start-refine
     else
       log_warning_msg "Refine already running"
     fi
     ;;
   stop)
     if [ -r ${REFINE_LOG}/refine.pid ] ; then
-      pid=`cat ${REFINE_LOG}/refine.pid`
-      kill ${pid}
-      wait ${pid}
+      start-stop-daemon --stop --oknodo --pidfile ${REFINE_LOG}/refine.pid
+      wait `cat ${REFINE_LOG}/refine.pid`
       rm ${REFINE_LOG}/refine.pid
-      log_success_msg "Stopping Refine"
     else
       log_warning_msg "Refine not running"
     fi

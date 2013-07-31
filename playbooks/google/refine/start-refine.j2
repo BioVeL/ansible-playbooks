@@ -1,0 +1,7 @@
+#!/bin/sh
+
+REFINE_INSTALL={{google_refine_install}}/google-refine-2.6.0
+REFINE_LOG={{google_refine_log}}
+REFINE_DATA={{google_refine_data}}
+
+exec ${REFINE_INSTALL}/refine -i 0.0.0.0 -w ${REFINE_INSTALL}/main/webapp -d ${REFINE_DATA} run > ${REFINE_LOG}/google_refine.log 2>&1
