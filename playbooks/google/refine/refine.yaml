@@ -1,4 +1,10 @@
 ---
+- hosts: google-refine:&apt
+  sudo: yes
+  tasks:
+    - name: Install CURL (used by refine init script)
+      apt: pkg=curl state=present
+
 - hosts: google-refine
   vars:
     google_refine_install: "/opt/GoogleRefine"
@@ -12,7 +18,7 @@
       group: name=refine system=yes state=present
 
     - name: Create a Refine user account
-      user: name=refine comment="Refine service" group=refine system=yes home={{google_refine_home}} state=present
+      user: name=refine comment="Refine service" group=refine system=yes createhome=no home={{google_refine_home}} state=present
 
     - name: create Google Refine home directory
       file: path={{google_refine_home}} state=directory owner=refine
