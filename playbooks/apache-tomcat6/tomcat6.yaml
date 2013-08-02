@@ -4,7 +4,13 @@
   tasks:
 
     - name: Install Tomcat 6
-      apt: pkg=tomcat6 state=present
+      apt: pkg={{item}} state=present
+      with_items:
+        # Tomcat complains on start if there is no JDK installed, but on Ubuntu
+        # 12.04 there is no JDK listed in its dependencies, so install a JDK
+        # manually.
+        - default-jdk
+        - tomcat6
 
 - hosts: apache-tomcat6
   sudo: yes
