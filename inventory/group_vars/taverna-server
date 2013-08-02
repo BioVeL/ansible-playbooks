@@ -3,3 +3,5 @@ taverna_server:
   context: tserver
   ts_user: taverna
   ts_pass: taverna
+
+taverna_server_context: tserver
