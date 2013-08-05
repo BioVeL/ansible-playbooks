@@ -17,9 +17,9 @@ CREATE UNIQUE INDEX credentials_type_url_login ON credentials (server_type, url,
 INSERT INTO credentials (name, description, url, login, password, server_type, in_use, \`default\`, 
 		created_at, updated_at)
 	VALUES ('Taverna Server on localhost', 'Taverna Server 2.4.1 with interaction enabled', 
-		'http://localhost:8080/{{taverna_server["context"]}}', '{{taverna_server["ts_user"]}}', 
-		'{{taverna_server["ts_pass"]}}', 'ts', 1, 1, current_timestamp(), current_timestamp())
-	ON DUPLICATE KEY UPDATE password='{{taverna_server["ts_pass"]}}';
+		'http://localhost:8080/{{taverna_server_context}}', '{{taverna_server_user}}', 
+		'{{taverna_server_pass}}', 'ts', 1, 1, current_timestamp(), current_timestamp())
+	ON DUPLICATE KEY UPDATE password='{{taverna_server_pass}}';
 INSERT INTO credentials (name, description, url, login, password, server_type, in_use, \`default\`, 
 		created_at, updated_at)
 	VALUES ('R Server on localhost', 'R Server', 'rserve://localhost:6311', 

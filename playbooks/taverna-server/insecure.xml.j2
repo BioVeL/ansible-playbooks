@@ -62,9 +62,9 @@
 	<security:authentication-manager>
 		<security:authentication-provider>
 			<security:user-service id="users">
-				<security:user name="{{taverna_server['ts_user']}}"
+				<security:user name="{{taverna_server_user}}"
 					authorities="ROLE_tavernauser,ROLE_tavernasuperuser"
-					password="{{taverna_server['ts_pass']}}" />
+					password="{{taverna_server_pass}}" />
 			</security:user-service>
 		</security:authentication-provider>
 	</security:authentication-manager>
