@@ -1,12 +1,5 @@
 Ansible configuration for BioVeL servers
 
-Install Ansible
-===============
-Install Ansible from https://github.com/ansible/ansible
-
-Run these commands to get a quick start installation:
-$ git clone https://github.com/ansible/ansible.git github-ansible
-$ source github-ansible/hacking/env-setup
 
 Configure ssh public key access
 ===============================
@@ -19,8 +12,11 @@ $ ssh-add <ssh-key>
 
 Setup
 =====
-Run the command
-$ ./setup
+From the directory containing this README, run the command:
+$ source setup.sh
+
+This will install Ansible if required, and create additional files, such as a 
+hosts file.
 
 Update the host inventory
 =========================
@@ -32,11 +28,13 @@ The files contained in the repository contain default usernames and passwords
 for services and databases.  You can use these, but anyone with access to the 
 Github repository will know the passwords.
 
-For additional security, create a host_vars/<hostname> file to override these
-entries.  e.g. if a host called portalhost is in the biovel-portal group, the 
+For additional security, copy the group_vars directory to the playbooks 
+directory. e.g. inventory/group_vars -> playbooks/group_vars and override the
+passwords. If a host called portalhost is in the biovel-portal group, the 
 default username and password for the portal's database will be obtained from
-group_vars/biovel-portal.  You can create a file host_vars/portalhost with a
-replacement definition.  Do not add these files to the repository!
+group_vars/biovel-portal.  You can create also a file 
+playbooks/host_vars/portalhost with a replacement definition.  Do not add 
+these files to the repository!
 
 Configure the hosts
 ===================

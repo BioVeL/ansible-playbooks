@@ -1,8 +1,0 @@
----
-biovel_portal:
-  db_user: biovel
-  db_pass: b10V3L
-
-taverna_server:
-  ts_user: taverna
-  ts_pass: lsj7ds6
