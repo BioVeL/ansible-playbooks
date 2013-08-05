@@ -59,15 +59,23 @@
       # re-run it when the Git repository gets updated
       sudo_user: www-data
       command: bundle exec rake assets:precompile
-          chdir={{biovel_portal_install}} creates={{biovel_portal_install}}/public/assets/application.js
+            chdir={{biovel_portal_install}} creates={{biovel_portal_install}}/public/assets/application.js
+
+    - name: Check database migration status
+      command: bundle exec rake RAILS_ENV=production db:migrate:status
+            chdir={{biovel_portal_install}}
+      register: biovel_portal_db_migration_status
+
+    ### Schema loading fails due to over-long index. Commmented out until SERVINF-135 is fixed
+    # - name: Initial setup of database
+    #   command: bundle exec rake RAILS_ENV=production db:setup
+    #         chdir={{biovel_portal_install}}
+    #   when: "'Schema migrations table does not exist yet' in biovel_portal_db_migration_status.stdout"
 
     - name: setup databases
       sudo_user: www-data
-      command: bundle exec rake RAILS_ENV={{item}} db:migrate
+      command: bundle exec rake RAILS_ENV=production db:migrate
             chdir={{biovel_portal_install}}
-      with_items:
-        - development
-        - production
 
     - name: setup for database completion
       template: src=dbcreate.sh.j2 dest={{biovel_portal_install}}/dbcreate.sh owner=root mode=0700
@@ -75,7 +83,7 @@
     - name: run setup for databases
       command: "{{biovel_portal_install}}/dbcreate.sh {{item}}"
       with_items:
-        - tlite_dev
+        #- tlite_dev
         - tlite_prod 
 
     # TODO - we need to ensure these daemons are started at boot time
