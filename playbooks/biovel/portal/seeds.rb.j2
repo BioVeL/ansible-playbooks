@@ -1,0 +1,39 @@
+# This file should contain all the record creation needed to seed the database with its default values.
+# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
+#
+# Examples:
+#
+#   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
+#   Mayor.create(:name => 'Emanuel', :city => cities.first)
+
+Credential.create(
+	:name => 'Taverna Server on localhost',
+	:description => 'Taverna Server 2.4.1 with interaction enabled',
+	:url => 'http://localhost:8080/{{taverna_server_context}}',
+	:login => '{{taverna_server_user}}',
+	:password => '{{taverna_server_pass}}',
+	:server_type => 'ts',
+	:in_use => true,
+	:default => true
+	)
+
+Credential.create(
+	:name => 'R Server on localhost',
+	:description => 'R Server',
+	:url => 'rserve://localhost:6311',
+	:login => '{{rserve_users[0]["user"]}}',
+	:password => '{{rserve_users[0]["pass"]}}',
+	:server_type => 'rserver',
+	:in_use => true,
+	:default => true
+	)
+
+User.create(
+	:name => '{{biovel_portal_admin_user}}',
+	:email => '{{biovel_portal_admin_email}}', 
+	:password => '{{biovel_portal_admin_pass}}',
+	:password_confirmation => nil, 
+	:admin => true,
+  :biovel => true, 
+  :type_id => 1
+	)

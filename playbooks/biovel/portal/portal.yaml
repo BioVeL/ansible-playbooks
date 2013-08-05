@@ -66,6 +66,10 @@
             chdir={{biovel_portal_install}}
       register: biovel_portal_db_migration_status
 
+    - name: Create database seed file
+      sudo_user: www-data
+      template: src=seeds.rb.j2 dest={{biovel_portal_install}}/db/seeds.rb mode=0600
+
     ### Schema loading fails due to over-long index. Commmented out until SERVINF-135 is fixed
     # - name: Initial setup of database
     #   command: bundle exec rake RAILS_ENV=production db:setup
@@ -77,14 +81,21 @@
       command: bundle exec rake RAILS_ENV=production db:migrate
             chdir={{biovel_portal_install}}
 
-    - name: setup for database completion
-      template: src=dbcreate.sh.j2 dest={{biovel_portal_install}}/dbcreate.sh owner=root mode=0700
+    ### db:setup will run db:seed, so delete this clause when uncommenting above
+    - name: Seed database
+      command: bundle exec rake RAILS_ENV=production db:seed
+            chdir={{biovel_portal_install}}
+      when: "'Schema migrations table does not exist yet' in biovel_portal_db_migration_status.stdout"
 
-    - name: run setup for databases
-      command: "{{biovel_portal_install}}/dbcreate.sh {{item}}"
-      with_items:
-        #- tlite_dev
-        - tlite_prod 
+    ### db:seed is the correct way to handle this, so delete this once all the above is working OK
+    # - name: setup for database completion
+    #   template: src=dbcreate.sh.j2 dest={{biovel_portal_install}}/dbcreate.sh owner=root mode=0700
+
+    # - name: run setup for databases
+    #   command: "{{biovel_portal_install}}/dbcreate.sh {{item}}"
+    #   with_items:
+    #     #- tlite_dev
+    #     - tlite_prod 
 
     # TODO - we need to ensure these daemons are started at boot time
     # we also need to restart them if they are running. Easiest is just to

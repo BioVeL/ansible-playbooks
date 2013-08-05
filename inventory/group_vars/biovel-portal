@@ -6,5 +6,9 @@ biovel_portal_git_version: e9ef919d20ab9bad9219aa1e0d267685aaef861b
 biovel_portal_install: /opt/BioVeLPortal
 biovel_portal_log: /opt/var/log/BioVeLPortal
 
+biovel_portal_admin_user: admin
+biovel_portal_admin_email: support@biovel.eu
+biovel_portal_admin_pass: biovel
+
 biovel_portal_db_user: biovel
 biovel_portal_db_pass: biovel
