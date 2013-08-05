@@ -42,7 +42,7 @@
 
     - name: Get portal code
       sudo_user: www-data
-      git: repo=https://github.com/BioVeL/portal.git dest={{portal_install}} version=0.3.7-maint
+      git: repo=https://github.com/BioVeL/portal.git dest={{portal_install}} version={{biovel_portal_git_version}}
       notify: restart portal
 
     - name: install Ruby dependencies using bundle

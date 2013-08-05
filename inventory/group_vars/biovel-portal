@@ -3,3 +3,6 @@
 biovel_portal:
   db_user: biovel
   db_pass: biovel
+
+# Which version to checkout of Github - this can be HEAD, a named branch or tag, or a SHA
+biovel_portal_git_version: 0.3.7-maint
