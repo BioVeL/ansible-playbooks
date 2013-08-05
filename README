@@ -17,6 +17,11 @@ additional flags).
 Typically, this requires the command:
 $ ssh-add <ssh-key>
 
+Setup
+=====
+Run the command
+$ ./setup
+
 Update the host inventory
 =========================
 Ensure the inventory/hosts file contains the hosts you wish to manage.
