@@ -1,6 +1,7 @@
 ---
 # Which version to checkout of Github - this can be HEAD, a named branch or tag, or a SHA
-biovel_portal_git_version: 0.3.7-maint
+# e9ef919d20ab9bad9219aa1e0d267685aaef861b is branch 0.4.0-maint after 2013-08-02
+biovel_portal_git_version: e9ef919d20ab9bad9219aa1e0d267685aaef861b
 
 biovel_portal_install: /opt/BioVeLPortal
 biovel_portal_log: /opt/var/log/BioVeLPortal
