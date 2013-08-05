@@ -32,8 +32,8 @@ For additional security, copy the group_vars directory to the playbooks
 directory. e.g. inventory/group_vars -> playbooks/group_vars and override the
 passwords. If a host called portalhost is in the biovel-portal group, the 
 default username and password for the portal's database will be obtained from
-group_vars/biovel-portal.  You can create also a file 
-playbooks/host_vars/portalhost with a replacement definition.  Do not add 
+group_vars/biovel-portal.  You can also create a host-specific file 
+playbooks/host_vars/portalhost to override group definitions.  Do not add 
 these files to the repository!
 
 Configure the hosts

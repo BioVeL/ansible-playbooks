@@ -1,5 +1,5 @@
 ---
-# Replace these default aalues in a host_vars file
+# Replace these default values in a host_vars file
 biovel_portal:
   db_user: biovel
   db_pass: biovel
