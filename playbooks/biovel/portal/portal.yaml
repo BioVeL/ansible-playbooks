@@ -17,8 +17,6 @@
 
 - hosts: biovel-portal
   sudo: yes
-  vars_files:
-    - vars.yaml
   tasks:
     - name: Install Ruby gem bundler
       gem: name=bundler state=present
@@ -31,49 +29,51 @@
         - tlite_prod
 
     - name: Add BioVeL Portal database user
-      mysql_user: name={{biovel_portal['db_user']}} password={{biovel_portal['db_pass']}} state=present
+      mysql_user: name={{biovel_portal_db_user}} password={{biovel_portal_db_pass}} state=present
             "priv=tlite_prod.*:ALL/tlite_dev.*:ALL/tlite_test.*:ALL"
 
     - name: Create portal install directory
-      file: name={{portal_install}} state=directory owner=www-data
+      file: name={{biovel_portal_install}} state=directory owner=www-data
 
     - name: create Portal log directory
-      file: path={{portal_log}} state=directory owner=www-data
+      file: path={{biovel_portal_log}} state=directory owner=www-data
 
     - name: Get portal code
       sudo_user: www-data
-      git: repo=https://github.com/BioVeL/portal.git dest={{portal_install}} version={{biovel_portal_git_version}}
+      git: repo=https://github.com/BioVeL/portal.git dest={{biovel_portal_install}}
+            version={{biovel_portal_git_version}}
       notify: restart portal
 
     - name: install Ruby dependencies using bundle
       # this command is effectively idempotent, as it does not do anything if the dependencies
       # are already installed, and it is fast when nothing needs to be done
       command: bundle install
-          chdir={{portal_install}}
+          chdir={{biovel_portal_install}}
 
     - name: configure portal database connections
       sudo_user: www-data
-      template: src=database.yml.j2 dest={{portal_install}}/config/database.yml mode=0600
+      template: src=database.yml.j2 dest={{biovel_portal_install}}/config/database.yml mode=0600
 
     - name: precompile assets
       # TODO - assets only get precompiled when application.js does not exist - it would be nice to
       # re-run it when the Git repository gets updated
       sudo_user: www-data
       command: bundle exec rake assets:precompile
-          chdir={{portal_install}} creates={{portal_install}}/public/assets/application.js
+          chdir={{biovel_portal_install}} creates={{biovel_portal_install}}/public/assets/application.js
 
     - name: setup databases
       sudo_user: www-data
-      command: bundle exec rake RAILS_ENV={{item}} db:migrate chdir={{portal_install}}
+      command: bundle exec rake RAILS_ENV={{item}} db:migrate
+            chdir={{biovel_portal_install}}
       with_items:
         - development
         - production
 
     - name: setup for database completion
-      template: src=dbcreate.sh.j2 dest={{portal_install}}/dbcreate.sh owner=root mode=0700
+      template: src=dbcreate.sh.j2 dest={{biovel_portal_install}}/dbcreate.sh owner=root mode=0700
 
     - name: run setup for databases
-      command: "{{portal_install}}/dbcreate.sh {{item}}"
+      command: "{{biovel_portal_install}}/dbcreate.sh {{item}}"
       with_items:
         - tlite_dev
         - tlite_prod 
@@ -84,12 +84,12 @@
     - name: stop daemons
       sudo_user: www-data
       command: rake RAILS_ENV=production daemons:stop
-          chdir={{portal_install}}
+          chdir={{biovel_portal_install}}
 
     - name: start daemons
       sudo_user: www-data
       command: rake RAILS_ENV=production daemons:start
-          chdir={{portal_install}}
+          chdir={{biovel_portal_install}}
 
     - name: install Passenger
       gem: name=passenger state=present

@@ -57,8 +57,8 @@ development:
   adapter: mysql
   encoding: utf8
   database: tlite_dev
-  username: {{biovel_portal['db_user']}}
-  password: {{biovel_portal['db_pass']}}
+  username: {{biovel_portal_db_user}}
+  password: {{biovel_portal_db_pass}}
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
@@ -73,7 +73,7 @@ production:
   adapter: mysql
   encoding: utf8
   database: tlite_prod
-  username: {{biovel_portal['db_user']}}
-  password: {{biovel_portal['db_pass']}}
+  username: {{biovel_portal_db_user}}
+  password: {{biovel_portal_db_pass}}
   #socket: /var/run/mysqld/mysqld.sock
 

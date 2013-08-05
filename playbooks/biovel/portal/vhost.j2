@@ -3,15 +3,15 @@
     ServerAdmin {{sysadmin_email}}
   
     # This is the tlite rails app location.
-    DocumentRoot {{portal_install}}/public
-    <Directory {{portal_install}}/public>
+    DocumentRoot {{biovel_portal_install}}/public
+    <Directory {{biovel_portal_install}}/public>
         Options -MultiViews
         AllowOverride None
         Order allow,deny
         Allow from all
     </Directory>
     <IfModule expires_module>
-        <Directory {{portal_install}}/public/assets>
+        <Directory {{biovel_portal_install}}/public/assets>
             # This directory contains static assets for the Rails application. See
             # http://guides.rubyonrails.org/asset_pipeline.html#far-future-expires-header
             # ETags are not turned off as suggested in this link, as pages that
@@ -43,11 +43,11 @@
         </Directory>
     </IfModule>
  
-    ErrorLog {{portal_log}}/error.log
+    ErrorLog {{biovel_portal_log}}/error.log
  
     # Possible values include: debug, info, notice, warn, error, crit,
     # alert, emerg.
     LogLevel warn
  
-    CustomLog {{portal_log}}/access.log combined
+    CustomLog {{biovel_portal_log}}/access.log combined
 </VirtualHost>

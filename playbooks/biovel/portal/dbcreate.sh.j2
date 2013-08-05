@@ -5,8 +5,8 @@ touch ${MYSQL_CONF} || exit $?
 chmod 600 ${MYSQL_CONF} || exit $?
 cat > ${MYSQL_CONF} <<EOF
 [client]
-user={{biovel_portal['db_user']}}
-password={{biovel_portal['db_pass']}}
+user={{biovel_portal_db_user}}
+password={{biovel_portal_db_pass}}
 EOF
 
 # Created index prevents multiple lines being added with the same url/login.

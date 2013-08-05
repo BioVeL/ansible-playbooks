@@ -1,8 +1,9 @@
 ---
-# Replace these default values in a host_vars file
-biovel_portal:
-  db_user: biovel
-  db_pass: biovel
-
 # Which version to checkout of Github - this can be HEAD, a named branch or tag, or a SHA
 biovel_portal_git_version: 0.3.7-maint
+
+biovel_portal_install: /opt/BioVeLPortal
+biovel_portal_log: /opt/var/log/BioVeLPortal
+
+biovel_portal_db_user: biovel
+biovel_portal_db_pass: biovel
