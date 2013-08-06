@@ -1,0 +1,14 @@
+---
+# For a secure host, create a file playbooks/host_vars/[hostid]
+# with the secure hostname, and the locations of a key and certfile
+# e.g.
+# apache_https:
+#   hostname: secure.at.biovel.eu
+#   privateKey: secure.key
+#   certificate: secure.crt
+#   chainFile: chain.crt
+apache_https:
+  hostname: none
+  privateKey: none
+  certificate: none
+  chainFile: none

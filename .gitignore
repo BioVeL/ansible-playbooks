@@ -2,3 +2,4 @@ github-ansible/
 inventory/hosts
 playbooks/group_vars/
 playbooks/host_vars/
+playbooks/apache-httpd/secure/

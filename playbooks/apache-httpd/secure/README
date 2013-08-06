@@ -1,0 +1,16 @@
+To create a secure Apache server, add certificate and key files to this 
+directory.
+
+Then create a file in playbooks/host_vars named after the host entry containing
+the filenames prefixed with "secure/":
+e.g. if the hosts file contains:
+
+host1.at.biovel.eu
+
+create the file playbooks/host_vars/host1.at.biovel.eu containing:
+---
+apache_https:
+  hostname: host1.at.biovel.eu
+  privateKey: secure/host1.key
+  certificate: secure/host1.crt
+  chainFile: secure/chain.crt
