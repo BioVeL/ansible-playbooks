@@ -1,16 +1,13 @@
 ---
-- hosts: rserve:&apt
-  sudo: yes
-  tasks:
-
-    - name: Install Rserve
-      action: apt pkg={{item}} state=present
-      with_items:
-        - r-cran-rserve
-
 - hosts: rserve
   sudo: yes
   tasks:
+    # There is a package for Rserve in Ubuntu 12.04 (r-cran-rserve) but it is
+    # compiled for R 2.14 in the default repository, so we retrieve the latest
+    # Rserve from CRAN instead.
+    - name: Install Rserve package from CRAN
+      shell: echo "options(repos=structure(c(CRAN='{{cran_repository}}/')));if(require({{ item }})){}else{install.packages('Rserve')}" | /usr/bin/R --no-save
+
     - name: Create an Rserve group
       group: name=rserve system=yes state=present
 
