@@ -1,37 +1,35 @@
 ---
 - hosts: taverna-server
   sudo: yes
-  vars_files: 
-    - vars.yaml
   tasks:
     - name: Create Taverna Server install directory
-      file: path={{server_install}} state=directory owner=tomcat6
+      file: path={{taverna_server_install}} state=directory owner=tomcat6
 
     - name: Download Taverna Server
       get_url: url=http://tavlite1.biovel.eu:8080/taverna-server.war
-            dest={{server_install}}/taverna-server.war
+            dest={{taverna_server_install}}/taverna-server.war
 
     - name: Unpack Taverna Server
-      command: unzip {{server_install}}/taverna-server.war -d {{server_install}} creates={{server_install}}/WEB-INF/web.xml
+      command: unzip {{taverna_server_install}}/taverna-server.war -d {{taverna_server_install}} creates={{taverna_server_install}}/WEB-INF/web.xml
 
     - name: copy Taverna Server web.xml file
-      copy: src=web.xml dest={{server_install}}/WEB-INF/web.xml backup=yes
+      copy: src=web.xml dest={{taverna_server_install}}/WEB-INF/web.xml backup=yes
       notify: Restart Tomcat
 
     - name: copy Taverna Server insecure.xml file
-      template: src=insecure.xml.j2 dest={{server_install}}/WEB-INF/insecure.xml owner=tomcat6 mode=0600 backup=yes
+      template: src=insecure.xml.j2 dest={{taverna_server_install}}/WEB-INF/insecure.xml owner=tomcat6 mode=0600 backup=yes
 
     - name: copy Taverna Server properties file
-      template: src=tavernaserver.properties.j2 dest={{server_install}}/WEB-INF/tavernaserver.properties backup=yes
+      template: src=tavernaserver.properties.j2 dest={{taverna_server_install}}/WEB-INF/tavernaserver.properties backup=yes
       notify: Restart Tomcat
 
     - name: create Taverna Server log directory
-      file: path={{server_log}} state=directory owner=tomcat6
+      file: path={{taverna_server_log}} state=directory owner=tomcat6
 
     # TODO - move this to a BioVeL-specific section
     - name: Install JSON-simple JAR
       get_url: url=http://json-simple.googlecode.com/files/json-simple-1.1.1.jar
-          dest={{server_install}}/WEB-INF/classes/util/taverna-commandline-2.4.1i-1.0.2/lib/json-simple-1.1.1.jar
+          dest={{taverna_server_install}}/WEB-INF/classes/util/taverna-commandline-2.4.1i-1.0.2/lib/json-simple-1.1.1.jar
 
     - name: create Taverna Server context in Tomcat
       template: src=tserver.xml.j2 dest=/etc/tomcat6/Catalina/localhost/{{taverna_server_context}}.xml owner=tomcat6

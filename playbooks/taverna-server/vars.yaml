@@ -1,8 +1,0 @@
----
-server_install: /opt/TavernaServer
-server_log: /opt/var/log/TavernaServer
-
-# The maximum time in minutes that a workflow may run (1440 = 1 day)
-workflow_lifetime: 2880
-# The maximum number of concurrently running workflows
-workflow_max_running: 7
