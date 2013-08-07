@@ -63,7 +63,7 @@
     - name: Setup R facts
       set_fact: r_changed=False
 
-    - name: Install Rserve
+    - name: Install R
       action: apt pkg={{item}} state=present
       with_items:
         - r-base
