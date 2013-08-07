@@ -50,9 +50,18 @@
       command: bundle install
           chdir={{biovel_portal_install}}
 
+    - name: configure portal password reset link
+      sudo_user: www-data
+      lineinfile: dest='{{biovel_portal_install}}/config/environments/production.rb'
+            regexp='^ *config.action_mailer.default_url_options *='
+            line='  config.action_mailer.default_url_options = { :host => "{{external_hostname}}" }'
+            state=present backup=yes
+      notify: restart portal
+
     - name: configure portal database connections
       sudo_user: www-data
       template: src=database.yml.j2 dest={{biovel_portal_install}}/config/database.yml mode=0600
+      notify: restart portal
 
     - name: precompile assets
       # TODO - assets only get precompiled when application.js does not exist - it would be nice to
