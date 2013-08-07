@@ -38,6 +38,7 @@
 - include: google/refine/refine.yaml
 - include: biovel/workflows/drw.yaml
 # Everything needed for BioVeL Portal
+- include: mail-transfer/sendmail.yml
 - include: mysql/mysql-server.yaml
 - include: apache-httpd/httpd.yaml
 - include: biovel/portal/portal.yaml

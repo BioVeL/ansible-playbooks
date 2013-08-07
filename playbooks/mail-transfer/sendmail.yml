@@ -1,0 +1,7 @@
+---
+# BioVeL portal needs to be able to send email - just setup default sendmail for now
+- hosts: biovel-portal:&apt
+  sudo: yes
+  tasks:
+    - name: Install sendmail
+      apt: pkg=sendmail state=latest
