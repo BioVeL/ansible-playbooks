@@ -2,7 +2,10 @@
     ServerName {{external_hostname}}
     ServerAdmin {{sysadmin_email}}
 {% if apache_https["hostname"] != 'none' %}
-    Redirect permanent / https://{{apache_https["hostname"]}}/
+    # Use a temporary redirect. We want clients to keep checking the original
+    # URL to handle the case where we have a different hostname pointing to this
+    # server. e.g. portal.biovel.eu -> vers4.at.biovel.eu
+    Redirect / https://{{apache_https["hostname"]}}/
 </VirtualHost>
 
 <VirtualHost *:443>
