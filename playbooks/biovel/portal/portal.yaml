@@ -50,6 +50,11 @@
       command: bundle install
           chdir={{biovel_portal_install}}
 
+    # Before 2013-08-08 
+    - name: ensure production.rb exists
+      sudo_user: www-data
+      shell: "[ -r '{{biovel_portal_install}}/config/environments/production.rb' ] || cp '{{biovel_portal_install}}/config/environments/production.example.rb' '{{biovel_portal_install}}/config/environments/production.rb'"
+
     - name: configure portal password reset link
       sudo_user: www-data
       lineinfile: dest='{{biovel_portal_install}}/config/environments/production.rb'
