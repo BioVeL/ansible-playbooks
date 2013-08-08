@@ -96,15 +96,20 @@
             chdir={{biovel_portal_install}}
       when: "'Schema migrations table does not exist yet' in biovel_portal_db_migration_status.stdout"
 
-    ### db:seed is the correct way to handle this, so delete this once all the above is working OK
-    # - name: setup for database completion
-    #   template: src=dbcreate.sh.j2 dest={{biovel_portal_install}}/dbcreate.sh owner=root mode=0700
+    - name: setup database verification script
+      template: src=dbcreate.sh.j2 dest={{biovel_portal_install}}/dbcreate.sh owner=root mode=0700
 
-    # - name: run setup for databases
-    #   command: "{{biovel_portal_install}}/dbcreate.sh {{item}}"
-    #   with_items:
-    #     #- tlite_dev
-    #     - tlite_prod 
+    - name: run database verification
+      command: "{{biovel_portal_install}}/dbcreate.sh {{item}}"
+      with_items:
+        #- tlite_dev
+        - tlite_prod
+
+    - name: remove database verification script
+      file: path={{biovel_portal_install}}/dbcreate.sh state=absent
+
+    - name: setup data management script
+      template: src=datactl.sh.j2 dest={{biovel_portal_install}}/datactl.sh owner=www-data mode=0700
 
     # TODO - we need to ensure these daemons are started at boot time
     # we also need to restart them if they are running. Easiest is just to
