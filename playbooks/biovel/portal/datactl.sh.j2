@@ -39,7 +39,7 @@ save)
 	;;
 load)
 	# Load data from file
-	(cd ${tmp} ; unzip ${zipped})
+	unzip ${zipped} -d ${tmp}
 	for d in result_store workflow_store ; do
 		if [ -d ${portal}/public/${d} ] ; then
 			mv ${portal}/public/${d} ${portal}/public/${d}.$$
