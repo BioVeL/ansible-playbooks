@@ -1,0 +1,55 @@
+#!/bin/sh
+
+set -e  # script fails if any command fails
+
+portal=/opt/BioVeLPortal
+
+action=$1
+dbname=$2
+zipped=$3
+
+if [ -z "${action}" -o -z "${dbname}" -o -z "${zipped}" ] ; then
+	action=usage
+else
+	tmp=${portal}/tmp-$$
+	mkdir ${tmp}
+	# on exit or signal, delete the temp directory
+	trap "rm -r '${tmp}'" EXIT
+	for sig in INT TERM ; do
+		trap "rm -r '${tmp}'; kill -${sig} $$" ${sig}
+	done
+	chmod 700 ${tmp}
+	MYSQL_CONF=${tmp}/mysql.cnf
+	cat > ${MYSQL_CONF} <<EOF
+[client]
+user={{biovel_portal_db_user}}
+password={{biovel_portal_db_pass}}
+EOF
+fi
+
+case "${action}" in
+save)
+	# Save data to file
+	mysqldump --defaults-file=${MYSQL_CONF} ${dbname} > ${tmp}/mysql.dump
+	ln -s ${portal}/public/workflow_store ${tmp}/workflow_store
+	ln -s ${portal}/public/result_store ${tmp}/result_store
+	(cd ${tmp} ; zip -r data.zip mysql.dump workflow_store result_store)
+	chmod 600 ${tmp}/data.zip
+	mv ${tmp}/data.zip ${zipped}
+	;;
+load)
+	# Load data from file
+	(cd ${tmp} ; unzip ${zipped})
+	for d in result_store workflow_store ; do
+		if [ -d ${portal}/public/${d} ] ; then
+			mv ${portal}/public/${d} ${portal}/public/${d}.$$
+		fi
+		mv ${tmp}/${d} ${portal}/public/${d}
+	done
+	mysql --defaults-file=${MYSQL_CONF} --database=${dbname} < ${tmp}/mysql.dump
+	;;
+*)
+	echo "Usage: $0 ('save'|'load') dbname zip-file" >&2
+	exit 1
+	;;
+esac
