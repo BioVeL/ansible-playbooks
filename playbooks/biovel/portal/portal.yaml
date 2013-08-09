@@ -50,7 +50,7 @@
       command: bundle install
           chdir={{biovel_portal_install}}
 
-    # Before 2013-08-08 
+    # From 2013-08-08 production.rb needs to be created from example file
     - name: ensure production.rb exists
       sudo_user: www-data
       shell: "[ -r '{{biovel_portal_install}}/config/environments/production.rb' ] || cp '{{biovel_portal_install}}/config/environments/production.example.rb' '{{biovel_portal_install}}/config/environments/production.rb'"
@@ -84,23 +84,22 @@
       sudo_user: www-data
       template: src=seeds.rb.j2 dest={{biovel_portal_install}}/db/seeds.rb mode=0600
 
-    ### Schema loading fails due to over-long index. Commmented out until SERVINF-135 is fixed
-    # - name: Initial setup of database
-    #   command: bundle exec rake RAILS_ENV=production db:setup
-    #         chdir={{biovel_portal_install}}
-    #   when: "'Schema migrations table does not exist yet' in biovel_portal_db_migration_status.stdout"
+    # Run db:setup only when the database appears to be empty (no migration marker)
+    # Note, db:setup runs db:schema:load followed by db:seed
+    - name: Initial setup of database
+      command: bundle exec rake RAILS_ENV=production db:setup
+            chdir={{biovel_portal_install}}
+      when: "'Schema migrations table does not exist yet' in biovel_portal_db_migration_status.stdout"
 
+    # Run migrate every time. After db:setup, it should do nothing. Otherwise, we are checking for
+    # any changes in the checked out portal
     - name: setup databases
       sudo_user: www-data
       command: bundle exec rake RAILS_ENV=production db:migrate
             chdir={{biovel_portal_install}}
 
-    ### db:setup will run db:seed, so delete this clause when uncommenting above
-    - name: Seed database
-      command: bundle exec rake RAILS_ENV=production db:seed
-            chdir={{biovel_portal_install}}
-      when: "'Schema migrations table does not exist yet' in biovel_portal_db_migration_status.stdout"
-
+    # A third level of database manipulation - this primarily updates the server passwords if they
+    # get changed in Ansible
     - name: setup database verification script
       template: src=dbcreate.sh.j2 dest={{biovel_portal_install}}/dbcreate.sh owner=root mode=0700
 
