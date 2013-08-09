@@ -14,9 +14,9 @@ else
 	tmp=${portal}/tmp-$$
 	mkdir ${tmp}
 	# on exit or signal, delete the temp directory
-	trap "rm -r '${tmp}'" EXIT
+	trap "rm -r '${tmp}'; trap - EXIT" EXIT
 	for sig in INT TERM ; do
-		trap "rm -r '${tmp}'; kill -${sig} $$" ${sig}
+		trap "rm -r '${tmp}'; trap - ${sig} EXIT; kill -${sig} $$" ${sig}
 	done
 	chmod 700 ${tmp}
 	MYSQL_CONF=${tmp}/mysql.cnf
