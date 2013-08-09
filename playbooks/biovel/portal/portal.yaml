@@ -75,24 +75,40 @@
       command: bundle exec rake assets:precompile
             chdir={{biovel_portal_install}} creates={{biovel_portal_install}}/public/assets/application.js
 
-    - name: Check database migration status
+    - name: setup data management script
+      template: src=datactl.sh.j2 dest={{biovel_portal_install}}/datactl.sh owner=www-data mode=0700
+
+    # To create the database, first check the current migration status
+    - name: Checking status of database
       command: bundle exec rake RAILS_ENV=production db:migrate:status
             chdir={{biovel_portal_install}}
       register: biovel_portal_db_migration_status
 
+    # If the database is empty (no migration status), and we have no data dump to initialise it,
+    # the use db:setup (= db:schema:load followed by db:seed)
     - name: Create database seed file
       sudo_user: www-data
       template: src=seeds.rb.j2 dest={{biovel_portal_install}}/db/seeds.rb mode=0600
 
-    # Run db:setup only when the database appears to be empty (no migration marker)
-    # Note, db:setup runs db:schema:load followed by db:seed
     - name: Initial setup of database
       command: bundle exec rake RAILS_ENV=production db:setup
             chdir={{biovel_portal_install}}
-      when: "'Schema migrations table does not exist yet' in biovel_portal_db_migration_status.stdout"
+      when: "biovel_portal_intial_data == 'none' and 'Schema migrations table does not exist yet' in biovel_portal_db_migration_status.stdout"
 
-    # Run migrate every time. After db:setup, it should do nothing. Otherwise, we are checking for
-    # any changes in the checked out portal
+    # If the database is empty and we have a dump from another portal, import it into the database
+    - name: Copy data dump
+      copy: src={{biovel_portal_intial_data}} dest={{biovel_portal_install}}/data.zip owner=www-data mode=0600
+      when: "biovel_portal_intial_data != 'none' and 'Schema migrations table does not exist yet' in biovel_portal_db_migration_status.stdout"
+
+    - name: Import data dump into database
+      command: "{{biovel_portal_install}}/datactl.sh load tlite_prod {{biovel_portal_install}}/data.zip"
+      when: "biovel_portal_intial_data != 'none' and 'Schema migrations table does not exist yet' in biovel_portal_db_migration_status.stdout"
+
+    - name: Delete data dump
+      file: path={{biovel_portal_install}}/data.zip state=absent
+
+    # Run migrate every time. After db:setup, it should do nothing. After a data import or if data already
+    # exists, it will ensure that the database is at the right migration level for this version of the portal
     - name: setup databases
       sudo_user: www-data
       command: bundle exec rake RAILS_ENV=production db:migrate
@@ -111,9 +127,6 @@
 
     - name: remove database verification script
       file: path={{biovel_portal_install}}/dbcreate.sh state=absent
-
-    - name: setup data management script
-      template: src=datactl.sh.j2 dest={{biovel_portal_install}}/datactl.sh owner=www-data mode=0700
 
     # TODO - we need to ensure these daemons are started at boot time
     # we also need to restart them if they are running. Easiest is just to
