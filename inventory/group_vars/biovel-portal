@@ -1,7 +1,8 @@
 ---
 # Which version to checkout of Github - this can be HEAD, a named branch or tag, or a SHA
-# e9ef919d20ab9bad9219aa1e0d267685aaef861b is branch 0.4.0-maint after 2013-08-02
-biovel_portal_git_version: e9ef919d20ab9bad9219aa1e0d267685aaef861b
+# The scripts now only support Portal v0.5.0 or later, but may also work for
+# 0.4.0 branch from SHA 96cf2b6f74a7acaf417caa4304b1d508e24dec34
+biovel_portal_git_version: tags/0.5.0
 
 biovel_portal_install: /opt/BioVeLPortal
 biovel_portal_log: /opt/var/log/BioVeLPortal
