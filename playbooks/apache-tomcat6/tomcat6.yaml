@@ -16,6 +16,10 @@
   sudo: yes
   tasks:
 
+    - name: Increase Tomcat memory
+      lineinfile: dest=/etc/default/tomcat6 regexp='^(JAVA_OPTS=.*-Xmx)\d+[MmGg]?(.*)$' line='\g<1>1024m\g<2>'
+            state=present backrefs=yes backup=yes
+
     - name: Create Tomcat web.xml with WebDAV enabled
       template: src=web.xml.j2 dest=/etc/tomcat6/web.xml owner=root group=tomcat6 mode=0644 backup=yes 
       notify: Restart Tomcat
