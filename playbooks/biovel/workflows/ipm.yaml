@@ -1,5 +1,7 @@
 ---
 # R packages for Integral Projection Modelling workflow
+# The IPM workflow also requires json-simple to be installed in Taverna Server.
+# This is currently done in the DRW workflow play, so that must be run as well.
 - hosts: rserve
   sudo: yes
   tasks:
