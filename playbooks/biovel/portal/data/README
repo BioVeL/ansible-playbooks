@@ -1,0 +1,13 @@
+To initialize a portal database with a data dump generated using 
+"datactl.sh save...", put the data dump in this directory
+(e.g. data/data-20130809T0815Z.zip).
+
+Add a variable to the host configuration with the path to this file.
+e.g. for host1 with an unitialized database, add the following variable to the 
+file host_vars/host1:
+
+biovel_portal_intial_data: data/data-20130809T0815Z.zip
+
+Note, if the database already contains a migration marker, the contents will 
+not be overwritten.  This means you can safely re-run this step, even if the 
+database has been modified.

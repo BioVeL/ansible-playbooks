@@ -14,4 +14,4 @@ biovel_portal_admin_pass: biovel
 biovel_portal_db_user: biovel
 biovel_portal_db_pass: biovel
 
-biovel_portal_intial_data: none
+biovel_portal_initial_data: none
