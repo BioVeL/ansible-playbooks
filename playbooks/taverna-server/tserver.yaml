@@ -26,15 +26,6 @@
     - name: create Taverna Server log directory
       file: path={{taverna_server_log}} state=directory owner=tomcat6
 
-    # TODO - move JSON-simple jar installation to a BioVeL-specific section
-    - name: Find Taverna Command Line lib directory
-      shell: /bin/ls -d {{taverna_server_install}}/WEB-INF/classes/util/taverna-commandline-2.*/lib
-      register: taverna_server_cl_lib
-
-    - name: Install JSON-simple JAR
-      get_url: url=http://json-simple.googlecode.com/files/json-simple-1.1.1.jar
-          dest={{taverna_server_cl_lib.stdout}}/json-simple-1.1.1.jar
-
     - name: create Taverna Server context in Tomcat
       template: src=tserver.xml.j2 dest=/etc/tomcat6/Catalina/localhost/{{taverna_server_context}}.xml owner=tomcat6
       notify: Restart Tomcat
