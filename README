@@ -1,6 +1,19 @@
 Ansible configuration for BioVeL servers
 
 
+Requirements
+============
+These playbooks are tested on Ubuntu 12.04.  There are likely to be issues 
+using later versions of Ubuntu or other distributions.
+
+There are definitely problems awaiting users of non-APT distributions - all 
+the plays using "&apt" will need an equivalent for these other distributions.
+
+These Ansible playbooks work with BioVeL Portal 0.5.0
+For Portal versions 0.3.7/0.4.0, please checkout the playbooks with the tag 
+"portal0.4.0".
+
+
 Configure ssh public key access
 ===============================
 Setup password-less access to your hosts.  You should also have password-less
@@ -10,6 +23,7 @@ additional flags).
 Typically, this requires the command:
 $ ssh-add <ssh-key>
 
+
 Setup
 =====
 From the directory containing this README, run the command:
@@ -18,9 +32,11 @@ $ source setup.sh
 This will install Ansible if required, and create additional files, such as a 
 hosts file.
 
+
 Update the host inventory
 =========================
 Ensure the inventory/hosts file contains the hosts you wish to manage.
+
 
 Override defaults
 =================
@@ -30,11 +46,15 @@ Github repository will know the passwords.
 
 For additional security, copy the group_vars directory to the playbooks 
 directory. e.g. inventory/group_vars -> playbooks/group_vars and override the
-passwords. If a host called portalhost is in the biovel-portal group, the 
-default username and password for the portal's database will be obtained from
-group_vars/biovel-portal.  You can also create a host-specific file 
-playbooks/host_vars/portalhost to override group definitions.  Do not add 
-these files to the repository!
+passwords.
+
+If a host called portalhost is in the biovel-portal group, the default 
+username and password for the portal's database will be obtained from 
+group_vars/biovel-portal.
+
+You can also create a host-specific file playbooks/host_vars/portalhost to 
+override group definitions.  Do not add these files to the repository!
+
 
 Configure the hosts
 ===================
