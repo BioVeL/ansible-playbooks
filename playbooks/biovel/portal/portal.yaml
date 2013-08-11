@@ -50,10 +50,10 @@
       command: bundle install
           chdir={{biovel_portal_install}}
 
-    # From 2013-08-08 production.rb needs to be created from example file
     - name: ensure production.rb exists
       sudo_user: www-data
-      shell: "[ -r '{{biovel_portal_install}}/config/environments/production.rb' ] || cp '{{biovel_portal_install}}/config/environments/production.example.rb' '{{biovel_portal_install}}/config/environments/production.rb'"
+      shell: cp '{{biovel_portal_install}}/config/environments/production.example.rb' '{{biovel_portal_install}}/config/environments/production.rb'"
+            creates='{{biovel_portal_install}}/config/environments/production.rb'
 
     - name: configure portal password reset link
       sudo_user: www-data
@@ -97,6 +97,7 @@
 
     # If the database is empty and we have a dump from another portal, import it into the database
     - name: Copy data dump
+      sudo_user: www-data
       copy: src={{biovel_portal_initial_data}} dest={{biovel_portal_install}}/data.zip owner=www-data mode=0600
       when: "biovel_portal_initial_data != 'none' and 'Schema migrations table does not exist yet' in biovel_portal_db_migration_status.stdout"
 
