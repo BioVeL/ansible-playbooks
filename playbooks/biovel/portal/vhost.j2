@@ -1,75 +1,46 @@
-<VirtualHost *:80>
-    ServerName {{external_hostname}}
-    ServerAdmin {{sysadmin_email}}
 {% if apache_https["hostname"] != 'none' %}
-    # Use a temporary redirect. We want clients to keep checking the original
-    # URL to handle the case where we have a different hostname pointing to this
-    # server. e.g. portal.biovel.eu -> vers4.at.biovel.eu
-    RedirectMatch ^/(?!runs/)(.*)$ https://{{apache_https["hostname"]}}/$1
+{%   set secure_apache = True %}
+{%   set apache_ports = [80, 443] %}
+{% else %}
+{%   set secure_apache = False %}
+{%   set apache_ports = [80] %}
+{% endif %}
+{% if secure_apache %}
+# We would like to redirect all traffic to the HTTPS port. However, runs
+# that use interactions include non-HTTPS data objects.  Including these
+# causes some browsers (Chrome, Firefox) to provide additional indications
+# on the browser address bar.  Firefox 23 in particular, blocks the 
+# non-HTTPS components, and users must unblock it manually.  As this is
+# new and confusing to users, we workaround by providing user interaction
+# pages in a non-HTTPS page.  Currently, this requires us to use non-HTTPS
+# for /runs/*.  So, the HTTP port redirects to HTTPS except for /runs/*
+# and the HTTPS port redirects to HTTP for /runs/*
+# Use a temporary redirect. We want clients to keep checking the original
+# URL to handle the case where we have a different hostname pointing to
+# this server. e.g. portal.biovel.eu -> vers4.at.biovel.eu
 
-    # This is the tlite rails app location.
-    DocumentRoot {{biovel_portal_install}}/public
-    <Directory {{biovel_portal_install}}/public>
-        Options -MultiViews
-        AllowOverride None
-        Order allow,deny
-        Allow from all
-    </Directory>
-    <IfModule expires_module>
-        <Directory {{biovel_portal_install}}/public/assets>
-            # This directory contains static assets for the Rails application. See
-            # http://guides.rubyonrails.org/asset_pipeline.html#far-future-expires-header
-            # ETags are not turned off as suggested in this link, as pages that
-            # suggest doing this never seem to provide a good reason.
-            #
-            # Some pages suggest that there exist browsers that ignore Expires
-            # when an ETag is present, but they do not name the browsers, and in
-            # any case this is merely less efficient, not incorrect behaviour.
-            #
-            # Other pages suggest that this is a problem when files are delivered
-            # by load balanced web servers, which each use a different ETag for the
-            # same file, but this is a general ETag problem, unrelated to its
-            # combination with Expires. And in any case, it doesn't currently
-            # apply to our setup (or to a well-designed load balancing system).
-            #
-            # On the other hand, keeping the ETag means even the once per day check
-            # is efficient, as it typically will not need to download the file.
-            # See the comments at
-            # http://www.askapache.com/htaccess/apache-speed-etags.html
-            #
-            ExpiresActive On
-            ExpiresDefault "access plus 1 day"
-            <FilesMatch "-[0-9a-f]{32}\.">
-                # CSS and JS files have a 32-digit hexadecimal hash in the filename.
-                # This changes whenever the contents change, allowing us to cache
-                # these files for a longer time
-                ExpiresDefault "access plus 1 year"
-            </FilesMatch>
-        </Directory>
-    </IfModule>
- 
-    ErrorLog {{biovel_portal_log}}/error.log
- 
-    # Possible values include: debug, info, notice, warn, error, crit,
-    # alert, emerg.
-    LogLevel warn
- 
-    CustomLog {{biovel_portal_log}}/access.log combined
-</VirtualHost>
-
-<VirtualHost *:443>
+{% endif %}
+{% for apache_port in apache_ports %}
+<VirtualHost *:{{apache_port}}>
     ServerName {{apache_https["hostname"]}}
     ServerAdmin {{sysadmin_email}}
 
+{%   if secure_apache %}
+{%     if apache_port == 80 %}
+    # Redirect everything except /runs/* to HTTPS
+    RedirectMatch ^/(?!runs/)(.*)$ https://{{apache_https["hostname"]}}/$1
+{%     else %} {#- apache_port == 443 #}
+    # Redirect /runs/* to HTTP
     RedirectMatch ^/(runs/.*)$ http://{{apache_https["hostname"]}}/$1
 
     SSLEngine on
     SSLCertificateFile /etc/apache2/ssl/{{apache_https["hostname"]}}.crt
     SSLCertificateKeyFile /etc/apache2/ssl/{{apache_https["hostname"]}}.key
     SSLCertificateChainFile /etc/apache2/ssl/chain.crt
-{% endif %}
-  
-    # This is the tlite rails app location.
+{%     endif %}
+{%   endif %}
+
+    # This is the Portal rails app location.
     DocumentRoot {{biovel_portal_install}}/public
     <Directory {{biovel_portal_install}}/public>
         Options -MultiViews
@@ -79,32 +50,33 @@
     </Directory>
     <IfModule expires_module>
         <Directory {{biovel_portal_install}}/public/assets>
-            # This directory contains static assets for the Rails application. See
-            # http://guides.rubyonrails.org/asset_pipeline.html#far-future-expires-header
-            # ETags are not turned off as suggested in this link, as pages that
-            # suggest doing this never seem to provide a good reason.
+            # This directory contains static assets for the Rails application.
+            # See http://guides.rubyonrails.org/asset_pipeline.html#far-future-expires-header
+            # ETags are not turned off as suggested in this link, as pages
+            # that suggest doing this never seem to provide a good reason.
             #
             # Some pages suggest that there exist browsers that ignore Expires
-            # when an ETag is present, but they do not name the browsers, and in
+            # when an ETag is present, but they do not name the browsers.  In
             # any case this is merely less efficient, not incorrect behaviour.
             #
-            # Other pages suggest that this is a problem when files are delivered
-            # by load balanced web servers, which each use a different ETag for the
-            # same file, but this is a general ETag problem, unrelated to its
-            # combination with Expires. And in any case, it doesn't currently
-            # apply to our setup (or to a well-designed load balancing system).
+            # Other pages suggest that this is a problem when files are
+            # delivered by load balanced web servers, which each use a
+            # different ETag for the same file, but this is a general ETag
+            # problem, unrelated to its combination with Expires. In any case,
+            # it doesn't currently apply to our setup (or to a well-designed
+            # load balancing system).
             #
-            # On the other hand, keeping the ETag means even the once per day check
-            # is efficient, as it typically will not need to download the file.
-            # See the comments at
+            # On the other hand, keeping the ETag means even the once per day
+            # check is efficient, as it typically will not need to download
+            # the file.  See the comments at
             # http://www.askapache.com/htaccess/apache-speed-etags.html
             #
             ExpiresActive On
-            ExpiresDefault "access plus 1 day"
+            ExpiresDefault "access plus 1 hour"
             <FilesMatch "-[0-9a-f]{32}\.">
-                # CSS and JS files have a 32-digit hexadecimal hash in the filename.
-                # This changes whenever the contents change, allowing us to cache
-                # these files for a longer time
+                # Asset files have a 32-digit hexadecimal hash in the filename.
+                # This changes whenever the contents change, allowing us to
+                # cache these files for a longer time
                 ExpiresDefault "access plus 1 year"
             </FilesMatch>
         </Directory>
@@ -118,3 +90,4 @@
  
     CustomLog {{biovel_portal_log}}/access.log combined
 </VirtualHost>
+{% endfor %}
