@@ -19,9 +19,11 @@ PATH=/bin:/usr/bin:/sbin:/usr/sbin
 case "$1" in
   start)
 	start-stop-daemon --start --oknodo --name Rserve --exec /usr/bin/R -- CMD Rserve --vanilla > /var/log/rserve 2>&1
+{% if rserve_from != 'github' %}
 	# fix for bug described at https://github.com/s-u/Rserve/issues/4
 	# change all R temp directories to be owned by the connection user
 	chown rserve /tmp/Rtmp*
+{% endif %}
 	;;
   stop)
 	start-stop-daemon --stop --oknodo --name Rserve
