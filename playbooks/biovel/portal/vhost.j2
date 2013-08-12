@@ -22,7 +22,11 @@
 {% endif %}
 {% for apache_port in apache_ports %}
 <VirtualHost *:{{apache_port}}>
+{%   if secure_apache %}
     ServerName {{apache_https["hostname"]}}
+{%   else %}
+    ServerName {{external_hostname}}
+{%   endif %}
     ServerAdmin {{sysadmin_email}}
 
 {%   if secure_apache %}
@@ -74,9 +78,9 @@
             ExpiresActive On
             ExpiresDefault "access plus 1 hour"
             <FilesMatch "-[0-9a-f]{32}\.">
-                # Asset files have a 32-digit hexadecimal hash in the filename.
-                # This changes whenever the contents change, allowing us to
-                # cache these files for a longer time
+                # Filenames with a 32-digit hexadecimal hash change whenever
+                # the contents change, allowing us to cache these files for a
+                # longer time
                 ExpiresDefault "access plus 1 year"
             </FilesMatch>
         </Directory>
