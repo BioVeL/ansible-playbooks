@@ -3,19 +3,36 @@
   sudo: yes
   tasks:
 
-    - name: Install Rserve
+    - name: Install Rserve package from APT
       action: apt pkg={{item}} state=present
+      when: 'rserve_from not in ("cran", "github")'
       with_items:
         - r-cran-rserve
+
+    - name: Install Git
+      action: apt pkg={{item}} state=present
+      when: rserve_from == "github"
+      with_items:
+        - git
 
 - hosts: rserve
   sudo: yes
   tasks:
+    # There is a package for Rserve in Ubuntu 12.04 (r-cran-rserve) but it is
+    # compiled for R 2.14 in the default repository, so we retrieve the latest
+    # Rserve from CRAN instead.
+    - name: Install Rserve package from CRAN
+      shell: 'echo "options(repos=structure(c(CRAN=''{{cran_repository}}/'')));if(require(Rserve)){}else{install.packages(''Rserve'')}" | /usr/bin/R --no-save'
+      when: rserve_from == "cran"
+
     - name: Create an Rserve group
       group: name=rserve system=yes state=present
 
     - name: Create an Rserve user account
       user: name=rserve comment="Rserve service" group=rserve system=yes createhome=no state=present
+
+    - include: rserve_github.yml
+      when: rserve_from == "github"
 
     - name: Get Rserve user and group ids
       shell: "getent passwd rserve | cut -d: -f3-4"
@@ -30,7 +47,7 @@
       notify: Restart Rserve
 
     - name: Create Rserve init script
-      copy: src=rserve-initd dest=/etc/init.d/rserve owner=root group=root mode=0755
+      template: src=rserve-initd.j2 dest=/etc/init.d/rserve owner=root group=root mode=0755
       notify: Restart Rserve
 
     # The handler for service enabled on Ubuntu 12.04 using update-rc.d is broken.

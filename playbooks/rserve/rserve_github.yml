@@ -1,0 +1,28 @@
+---
+- name: Create Rserve build directory
+  sudo_user: rserve
+  file: path=/tmp/Rserve.build state=directory
+
+- name: Get Rserve code from Github
+  sudo_user: rserve
+  git: repo=https://github.com/s-u/Rserve.git dest=/tmp/Rserve.build/Rserve
+        version={{rserve_git_version}}
+
+- name: Initialise Rserve Git submodules
+  sudo_user: rserve
+  command: git submodule init
+        chdir=/tmp/Rserve.build/Rserve
+
+- name: Update Rserve Git submodules
+  sudo_user: rserve
+  command: git submodule update
+        chdir=/tmp/Rserve.build/Rserve
+
+- name: Build Rserve package
+  sudo_user: rserve
+  command: /bin/sh /tmp/Rserve.build/Rserve/mkdist
+        chdir=/tmp/Rserve.build/Rserve
+
+- name: Install Rserve from source
+  shell: echo "if(require(Rserve)){}else{install.packages('/tmp/Rserve.build/Rserve_1.7-2.tar.gz', repos=NULL)}" | /usr/bin/R --no-save
+

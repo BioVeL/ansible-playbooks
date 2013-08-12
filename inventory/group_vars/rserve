@@ -2,3 +2,17 @@
 rserve_users:
   - user: biovel
     pass: biovel
+
+# Where to obtain Rserve
+# 'cran': Obtain from CRAN, contains bug https://github.com/s-u/Rserve/issues/4
+#         Also, does not work with SSL-enabled portal SERVINF-152
+# 'github': Use version from Github, note that CRAN bug is fixed in SHA
+#         1debbfa7faf515afe17714de084e9ff0cd704ae3, which will be v1.7.2
+# * (anything else): Use OS package, which is usually out-of-date, compared to
+#         the packages for core R we obtain from the R repository
+#         However, it works.
+rserve_from: 'apt'
+
+rserve_git_version: 1debbfa7faf515afe17714de084e9ff0cd704ae3
+# Earlier fix b7c86ab5a3218b8f5213098694db10d1477d39f7 tries to create a
+# directory "/tm" due to code error
