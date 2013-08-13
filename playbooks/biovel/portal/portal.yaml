@@ -55,6 +55,10 @@
       shell: cp '{{biovel_portal_install}}/config/environments/production.example.rb' '{{biovel_portal_install}}/config/environments/production.rb'
             creates='{{biovel_portal_install}}/config/environments/production.rb'
 
+    - name: create site_keys.rb file
+      template: src=site_keys.rb.j2 dest={{biovel_portal_install}}/config/initializers/site_keys.rb
+          owner=www-data group=www-data mode=0600
+
     - name: configure portal password reset link
       sudo_user: www-data
       lineinfile: dest='{{biovel_portal_install}}/config/environments/production.rb'

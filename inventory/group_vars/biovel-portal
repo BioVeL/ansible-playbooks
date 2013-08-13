@@ -9,9 +9,15 @@ biovel_portal_log: /opt/var/log/BioVeLPortal
 
 biovel_portal_admin_user: admin
 biovel_portal_admin_email: support@biovel.eu
+# CHANGE ME in playbooks/group_vars/biovel-portal:
 biovel_portal_admin_pass: biovel
 
 biovel_portal_db_user: biovel
+# CHANGE ME in playbooks/group_vars/biovel-portal:
 biovel_portal_db_pass: biovel
 
 biovel_portal_initial_data: none
+
+# Site key needs to be same for all portals that share user registration
+# CHANGE ME in playbooks/group_vars/biovel-portal:
+biovel_portal_site_key: 0295b98dbf2eeb5a33408786c86e99b3ccc31e69
