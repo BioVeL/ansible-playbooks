@@ -52,7 +52,7 @@
 
     - name: ensure production.rb exists
       sudo_user: www-data
-      shell: cp '{{biovel_portal_install}}/config/environments/production.example.rb' '{{biovel_portal_install}}/config/environments/production.rb'"
+      shell: cp '{{biovel_portal_install}}/config/environments/production.example.rb' '{{biovel_portal_install}}/config/environments/production.rb'
             creates='{{biovel_portal_install}}/config/environments/production.rb'
 
     - name: configure portal password reset link
