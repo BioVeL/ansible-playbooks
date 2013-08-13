@@ -101,11 +101,11 @@
 
     # If the database is empty and we have a dump from another portal, import it into the database
     - name: Copy data dump
-      sudo_user: www-data
       copy: src={{biovel_portal_initial_data}} dest={{biovel_portal_install}}/data.zip owner=www-data mode=0600
       when: "biovel_portal_initial_data != 'none' and 'Schema migrations table does not exist yet' in biovel_portal_db_migration_status.stdout"
 
     - name: Import data dump into database
+      sudo_user: www-data
       command: "{{biovel_portal_install}}/datactl.sh load tlite_prod {{biovel_portal_install}}/data.zip"
       when: "biovel_portal_initial_data != 'none' and 'Schema migrations table does not exist yet' in biovel_portal_db_migration_status.stdout"
 
