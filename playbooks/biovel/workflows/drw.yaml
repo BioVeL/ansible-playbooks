@@ -13,3 +13,7 @@
     - name: Install Data Refinement Workflow dependencies
       copy: src=DCWorkflow.jar
             dest={{taverna_server_cl_lib.stdout}}/DCWorkflow.jar
+
+    - name: Install Data Refinement uber JAR
+      get_url: url=https://biovel.googlecode.com/svn/trunk/drf/lib/uber-drf-workflow-1.0.1-SNAPSHOT.jar
+          dest={{taverna_server_cl_lib.stdout}}/uber-drf-workflow-1.0.1-SNAPSHOT.jar
