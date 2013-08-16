@@ -15,9 +15,19 @@
 # pages in a non-HTTPS page.  Currently, this requires us to use non-HTTPS
 # for /runs/*.  So, the HTTP port redirects to HTTPS except for /runs/*
 # and the HTTPS port redirects to HTTP for /runs/*
+#
 # Use a temporary redirect. We want clients to keep checking the original
 # URL to handle the case where we have a different hostname pointing to
 # this server. e.g. portal.biovel.eu -> vers4.at.biovel.eu
+#
+# Due to the way HTTP redirects of a POST method get interpreted by clients
+# (302 redirects to a GET, and (in some browsers) 307 prompts the user to
+# re-post), redirects are problematic in a REST-like interface.  The Apache
+# Redirect directive cannot distinguish HTTP methods.  In Apache 2.4 we could
+# use <If> around a Redirect directive.  But, for Apache 2.2, we use the
+# Rewrite directives instead.  This allows us to filter out POST requests so 
+# they do not get redirected.  Since the problem being solved only occurs
+# during the GET, this works fine.
 
 {% endif %}
 {% for apache_port in apache_ports %}
@@ -30,12 +40,14 @@
     ServerAdmin {{sysadmin_email}}
 
 {%   if secure_apache %}
+    RewriteEngine On
+    RewriteCond %{REQUEST_METHOD} !=POST
 {%     if apache_port == 80 %}
     # Redirect everything except /runs/* to HTTPS
-    RedirectMatch ^/(?!runs/)(.*)$ https://{{apache_https["hostname"]}}/$1
+    RewriteRule ^/(?!runs/.) https://{{apache_https["hostname"]}}%{REQUEST_URI}%{QUERY_STRING} [R,L]
 {%     else %} {#- apache_port == 443 #}
     # Redirect /runs/* to HTTP
-    RedirectMatch ^/(runs/.*)$ http://{{apache_https["hostname"]}}/$1
+    RewriteRule ^/runs/. http://{{apache_https["hostname"]}}%{REQUEST_URI}%{QUERY_STRING} [R,L]
 
     SSLEngine on
     SSLCertificateFile /etc/apache2/ssl/{{apache_https["hostname"]}}.crt
