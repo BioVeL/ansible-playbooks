@@ -116,9 +116,14 @@ Portal::Application.configure do
   # with SQLite, MySQL, and PostgreSQL)
   # config.active_record.auto_explain_threshold_in_seconds = 0.5
 
-  # Google analytics tracking (change the code!):
+  # Google analytics tracking:
+{% if biovel_portal_google_analytics_code == 'none' %}
   config.enable_google_analytics = false
   GA.tracker = "UA-xxxxxx-x"
+{% else %}
+  config.enable_google_analytics = true
+  GA.tracker = "{{biovel_portal_google_analytics_code}}"
+{% endif %}
 
   # Toggle rack-mini-profiler
   config.enable_mini_profiler = false
