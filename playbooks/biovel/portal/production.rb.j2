@@ -76,7 +76,7 @@ Portal::Application.configure do
   # config.force_ssl = true
 
   # See everything in the log (default is :info)
-  config.log_level = :warn
+  config.log_level = :info
 
   # Prepend all log lines with the following tags
   # config.log_tags = [ :subdomain, :uuid ]
@@ -122,4 +122,13 @@ Portal::Application.configure do
 
   # Toggle rack-mini-profiler
   config.enable_mini_profiler = false
+end
+
+# Add a timestamp to any error messages - this causes the logging info about
+# a request and the error message to appear in the same stanza, with no
+# blank lines between them, making the log file more readable.
+class Logger
+  def format_message(level, time, progname, msg)
+    "#{time.to_s(:db)} #{level} – #{msg}\n"
+  end
 end
