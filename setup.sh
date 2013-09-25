@@ -8,7 +8,9 @@ if [ -z "${ANSIBLE}" ] ; then
   if [ ! -d ${GITHUB_ANSIBLE} ] ; then
     git clone https://github.com/ansible/ansible.git ${GITHUB_ANSIBLE}
   fi
-  (cd ${GITHUB_ANSIBLE}; git checkout tags/v1.2.2)
+  # Requires Ansible >= 1.3.0 because patch to add gem user_install flag didn't 
+  # make backwards-compatible behaviour the default
+  (cd ${GITHUB_ANSIBLE}; git checkout tags/v1.3.2)
   source ${GITHUB_ANSIBLE}/hacking/env-setup
 fi
 

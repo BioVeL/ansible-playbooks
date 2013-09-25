@@ -19,7 +19,7 @@
   sudo: yes
   tasks:
     - name: Install Ruby gem bundler
-      gem: name=bundler state=present
+      gem: name=bundler state=present user_install=no
 
     - name: Add BioVeL Portal database
       mysql_db: name={{item}} state=present
@@ -140,7 +140,7 @@
           chdir={{biovel_portal_install}}
 
     - name: install Passenger
-      gem: name=passenger state=present
+      gem: name=passenger state=present user_install=no
 
     - name: install Passenger into Apache
       shell: yes | passenger-install-apache2-module
