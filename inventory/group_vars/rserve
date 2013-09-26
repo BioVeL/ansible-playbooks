@@ -13,6 +13,4 @@ rserve_users:
 #         However, it works.
 rserve_from: 'apt'
 
-rserve_git_version: 1debbfa7faf515afe17714de084e9ff0cd704ae3
-# Earlier fix b7c86ab5a3218b8f5213098694db10d1477d39f7 tries to create a
-# directory "/tm" due to code error
+rserve_git_version: tags/1.7-2
