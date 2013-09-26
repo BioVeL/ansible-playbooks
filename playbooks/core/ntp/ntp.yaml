@@ -1,11 +1,11 @@
 ---
-- hosts: apt
+- hosts: ntp:&apt
   sudo: yes
   tasks:
     - name: Install ntp
       action: apt pkg=ntp state=present
 
-- hosts: yum
+- hosts: ntp:&yum
   sudo: yes
   tasks:
     - name: Install ntp
@@ -14,7 +14,7 @@
     - name: Update step-tickers
       template: src=step-tickers.j2 dest=/etc/ntp/step-tickers owner=root group=root mode=0644
 
-- hosts: all
+- hosts: ntp
   sudo: yes
   vars_files:
     - vars-{{ansible_pkg_mgr}}.yaml

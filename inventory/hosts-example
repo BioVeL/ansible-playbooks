@@ -59,6 +59,9 @@ taverna-server
 [mysql-server:children]
 biovel-portal
 
+[ntp:children]
+amazon
+
 [rserve:children]
 rserve-local
 rserve-remote
