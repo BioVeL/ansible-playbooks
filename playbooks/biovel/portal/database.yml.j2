@@ -54,7 +54,11 @@ development:
 #  database: db/development.sqlite3
 #  pool: 5
 #  timeout: 10000
+{% if 'mysql2' in biovel_portal_mysql_adapters.stdout %}
   adapter: mysql2
+{% else %}
+  adapter: mysql
+{% endif %}
   encoding: utf8
   database: tlite_dev
   username: {{biovel_portal_db_user}}
@@ -70,7 +74,11 @@ test:
   timeout: 5000
 
 production:
+{% if 'mysql2' in biovel_portal_mysql_adapters.stdout %}
   adapter: mysql2
+{% else %}
+  adapter: mysql
+{% endif %}
   encoding: utf8
   database: tlite_prod
   username: {{biovel_portal_db_user}}

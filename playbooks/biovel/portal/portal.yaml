@@ -60,6 +60,10 @@
       template: src=site_keys.rb.j2 dest={{biovel_portal_install}}/config/initializers/site_keys.rb
           owner=www-data group=www-data mode=0600
 
+    - name: check MySQL adapter
+      shell: gem list | grep ^mysql
+      register: biovel_portal_mysql_adapters
+
     - name: configure portal database connections
       sudo_user: www-data
       template: src=database.yml.j2 dest={{biovel_portal_install}}/config/database.yml mode=0600
