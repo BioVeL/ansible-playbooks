@@ -15,7 +15,9 @@
 - hosts: external-ip:!amazon
   tasks:
     - name: get host's external IP address
-      command: curl --silent --fail http://169.254.169.254/latest/meta-data/public-ipv4
+      # See http://www.commandlinefu.com/commands/view/5427/get-your-external-ip-address
+      # for alternatives to this command
+      command: curl --silent --fail http://ifconfig.me/ip
       register: host_external_ip
 
     - set_fact: external_hostname="{{host_external_ip.stdout}}"
