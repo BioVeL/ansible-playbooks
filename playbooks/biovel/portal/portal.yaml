@@ -17,6 +17,9 @@
 
 - hosts: biovel-portal
   sudo: yes
+  vars:
+    - taverna_lite_git_version: e17a5fe5f2cc44dd00c6a0d5e106bb6dac5c84ec
+    - taverna_lite_install: /opt/TavernaLite
   tasks:
     - name: Install Ruby gem bundler
       gem: name=bundler state=present user_install=no
@@ -32,6 +35,15 @@
       mysql_user: name={{biovel_portal_db_user}} password={{biovel_portal_db_pass}} state=present
             "priv=tlite_prod.*:ALL/tlite_dev.*:ALL/tlite_test.*:ALL"
 
+    - name: Create Taverna Lite install directory
+      file: name={{taverna_lite_install}} state=directory owner=www-data
+
+    - name: Get Taverna Lite code
+      sudo_user: www-data
+      git: repo=https://github.com/scman1/taverna_lite.git dest={{taverna_lite_install}}
+            version={{taverna_lite_git_version}}
+      notify: restart portal
+
     - name: Create portal install directory
       file: name={{biovel_portal_install}} state=directory owner=www-data
 
@@ -40,9 +52,12 @@
 
     - name: Get portal code
       sudo_user: www-data
-      git: repo=https://github.com/BioVeL/portal.git dest={{biovel_portal_install}}
+      git: repo=https://github.com/scman1/portal.git dest={{biovel_portal_install}}
             version={{biovel_portal_git_version}}
       notify: restart portal
+
+    - name: Modify Gemfile
+      lineinfile: "dest={{biovel_portal_install}}/Gemfile regexp=\"^gem 'taverna_lite'\" line=\"gem 'taverna_lite', :path => '{{taverna_lite_install}}'\""
 
     - name: install Ruby dependencies using bundle
       # this command is effectively idempotent, as it does not do anything if the dependencies
