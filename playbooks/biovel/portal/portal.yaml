@@ -18,8 +18,9 @@
 - hosts: biovel-portal
   sudo: yes
   vars:
-    - taverna_lite_git_version: e17a5fe5f2cc44dd00c6a0d5e106bb6dac5c84ec
+    - taverna_lite_git_version: abdf8900709437db7296b212864db6ebdf3aab54
     - taverna_lite_install: /opt/TavernaLite
+    - taverna_lite_portal_git_version: cb43b0597958eb1895dbfaae67c1c3c5413c38a0
   tasks:
     - name: Install Ruby gem bundler
       gem: name=bundler state=present user_install=no
@@ -53,7 +54,7 @@
     - name: Get portal code
       sudo_user: www-data
       git: repo=https://github.com/scman1/portal.git dest={{biovel_portal_install}}
-            version={{biovel_portal_git_version}}
+            version={{taverna_lite_portal_git_version}}
       notify: restart portal
 
     - name: Modify Gemfile
