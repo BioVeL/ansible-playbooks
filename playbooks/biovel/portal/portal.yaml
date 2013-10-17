@@ -18,9 +18,9 @@
 - hosts: biovel-portal
   sudo: yes
   vars:
-    - taverna_lite_git_version: abdf8900709437db7296b212864db6ebdf3aab54
+    - taverna_lite_git_version: 3e3e638f015ff1b1bbfd5d12f62ed0432afcecfb
     - taverna_lite_install: /opt/TavernaLite
-    - taverna_lite_portal_git_version: cb43b0597958eb1895dbfaae67c1c3c5413c38a0
+    - taverna_lite_portal_git_version: f7ae36aa77b82d8356c19be54f5afcf3a5ceb671
   tasks:
     - name: Install Ruby gem bundler
       gem: name=bundler state=present user_install=no
