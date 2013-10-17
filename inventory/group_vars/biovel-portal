@@ -2,7 +2,7 @@
 # Which version to checkout of Github - this can be HEAD, a named branch or tag, or a SHA
 # The scripts now only support Portal v0.5.0 or later, but may also work for
 # 0.4.0 branch from SHA 96cf2b6f74a7acaf417caa4304b1d508e24dec34
-biovel_portal_git_version: tags/0.6.1
+biovel_portal_git_version: e720a4ba467590ee090d1102ea9a1a0dda271772
 
 biovel_portal_install: /opt/BioVeLPortal
 biovel_portal_log: /opt/var/log/BioVeLPortal
