@@ -8,12 +8,14 @@
         - libcurl4-gnutls-dev
         - libxml2-dev
         - libv8-dev
-        - ruby
-        - ruby-dev
-        - ri
-        - rubygems
+        - ruby1.9.1
+        - ruby1.9.1-dev
+        - ri1.9.1
         - git            # to obtain portal source code
         - python-mysqldb # required for Ansible mysql modules
+
+    - name: "Force ruby 1.9 to be default ruby"
+      command: update-alternatives --install /usr/bin/ruby ruby /usr/bin/ruby1.9.1 400 --slave /usr/share/man/man1/ruby.1.gz ruby.1.gz /usr/share/man/man1/ruby1.9.1.1.gz --slave /usr/bin/ri ri /usr/bin/ri1.9.1 --slave /usr/bin/irb irb /usr/bin/irb1.9.1 --slave /usr/bin/rdoc rdoc /usr/bin/rdoc1.9.1
 
 - hosts: biovel-portal
   sudo: yes
@@ -65,7 +67,7 @@
           owner=www-data group=www-data mode=0600
 
     - name: check MySQL adapter
-      shell: gem list | grep ^mysql
+      shell: bundle list | grep " mysql"
       register: biovel_portal_mysql_adapters
 
     - name: configure portal database connections
@@ -139,12 +141,12 @@
     # stop them start them. Stopping them if they are already stopped is OK.
     - name: stop workers
       sudo_user: www-data
-      command: bundle exec RAILS_ENV=production script/delayed_job -n {{taverna_server_max_running}} --queue=player start
+      shell: RAILS_ENV=production bundle exec ./script/delayed_job stop
           chdir={{biovel_portal_install}}
 
-    - name: start daemons
+    - name: start workers
       sudo_user: www-data
-      command: bundle exec RAILS_ENV=production script/delayed_job stop
+      shell: RAILS_ENV=production bundle exec ./script/delayed_job -n {{taverna_server_max_running}} --queue=player start
           chdir={{biovel_portal_install}}
 
     - name: install Passenger
