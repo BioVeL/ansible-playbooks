@@ -53,9 +53,6 @@ taverna-server
 google-refine
 taverna-workbench
 
-[tomcat-webdav:children]
-taverna-server
-
 [mysql-server:children]
 biovel-portal
 
