@@ -32,7 +32,6 @@
 # Everything needed for Taverna Server
 - include: unzip/unzip.yaml
 - include: apache-tomcat6/tomcat6.yaml
-- include: atomhopper/atomhopper.yaml
 - include: taverna-server/tserver.yaml
 # Everything needed for DRW workflow
 - include: google/refine/refine.yaml

@@ -1,6 +1,0 @@
----
-ah_install: /opt/AtomHopper
-# Witht he old version of AtomHopper we're using, the database files must be in /opt/atomhopper
-#ah_lib: /opt/var/lib/AtomHopper
-ah_lib: /opt/atomhopper
-ah_log: /opt/var/log/AtomHopper
