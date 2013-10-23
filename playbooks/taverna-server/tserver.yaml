@@ -6,7 +6,7 @@
       file: path={{taverna_server_install}} state=directory owner=tomcat6
 
     - name: Download Taverna Server
-      get_url: url=http://build.mygrid.org.uk/maven/repository/uk/org/taverna/server/server-webapp/2.5.0/server-webapp-2.5.0.war
+      get_url: url=http://build.mygrid.org.uk/maven/snapshot-repository/uk/org/taverna/server/server-webapp/2.5.1-SNAPSHOT/server-webapp-2.5.1-SNAPSHOT.war
             dest={{taverna_server_install}}/taverna-server.war
 
     - name: Unpack Taverna Server
