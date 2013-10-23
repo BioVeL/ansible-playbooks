@@ -154,22 +154,12 @@
       shell: yes | passenger-install-apache2-module
           creates=/etc/apache2/mods-available/passenger.load
       # The output is almost unreadable due to extensive use of control characters
-      # so we run two additional commands below to work out the correct values
+      # so we run an additional command below to work out the correct values
       #register: passenger_apache
 
-    - name: find Passenger base directory
-      shell: ls -d /var/lib/gems/1.8/gems/passenger-*
-      register: passenger_base
-
-    - name: find Passenger module
-      command: find {{passenger_base.stdout}} -name mod_passenger.so
-      register: passenger_module
-
     - name: add Passenger configuration
-      template: src={{item}}.j2 dest=/etc/apache2/mods-available/{{item}}
-      with_items:
-        - passenger.load
-        - passenger.conf
+      shell: passenger-install-apache2-module --snippet > /etc/apache2/mods-available/passenger.load
+          creates=/etc/apache2/mods-available/passenger.load
 
     - name: enable Apache Passenger module
       command: a2enmod passenger
