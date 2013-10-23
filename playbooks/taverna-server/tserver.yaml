@@ -6,7 +6,7 @@
       file: path={{taverna_server_install}} state=directory owner=tomcat6
 
     - name: Download Taverna Server
-      get_url: url=https://biovel.googlecode.com/svn/trunk/taverna/lib/server-webapp-2.4.3.war
+      get_url: url=http://build.mygrid.org.uk/maven/repository/uk/org/taverna/server/server-webapp/2.5.0/server-webapp-2.5.0.war
             dest={{taverna_server_install}}/taverna-server.war
 
     - name: Unpack Taverna Server
@@ -16,8 +16,8 @@
       copy: src=web.xml dest={{taverna_server_install}}/WEB-INF/web.xml backup=yes
       notify: Restart Tomcat
 
-    - name: copy Taverna Server insecure.xml file
-      template: src=insecure.xml.j2 dest={{taverna_server_install}}/WEB-INF/insecure.xml owner=tomcat6 mode=0600 backup=yes
+    - name: copy Taverna Server users properties file
+      template: src=users.properties.j2 dest={{taverna_server_install}}/WEB-INF/security/users.properties owner=tomcat6 mode=0600 backup=yes
 
     - name: copy Taverna Server properties file
       template: src=tavernaserver.properties.j2 dest={{taverna_server_install}}/WEB-INF/tavernaserver.properties backup=yes
