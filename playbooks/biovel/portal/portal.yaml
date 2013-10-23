@@ -44,10 +44,10 @@
             version={{biovel_portal_git_version}}
       notify: restart portal
 
-    - name: install Ruby dependencies using bundle
+    - name: install Ruby dependencies using bundler
       # this command is effectively idempotent, as it does not do anything if the dependencies
       # are already installed, and it is fast when nothing needs to be done
-      command: bundle install
+      command: bundle install --deployment
           chdir={{biovel_portal_install}}
 
     - name: create production environment configuration
@@ -55,6 +55,10 @@
       template: src=production.rb.j2 dest={{biovel_portal_install}}/config/environments/production.rb
             owner=www-data mode=0600
       notify: restart portal
+
+    - name: create taverna_player.rb config file
+      template: src=taverna_player.rb.j2 dest={{biovel_portal_install}}/config/initializers/taverna_player.rb
+          owner=www-data group=www-data mode=0600
 
     - name: create site_keys.rb file
       template: src=site_keys.rb.j2 dest={{biovel_portal_install}}/config/initializers/site_keys.rb
@@ -130,17 +134,17 @@
     - name: remove database verification script
       file: path={{biovel_portal_install}}/dbcreate.sh state=absent
 
-    # TODO - we need to ensure these daemons are started at boot time
+    # TODO - we need to ensure these workers are started at boot time
     # we also need to restart them if they are running. Easiest is just to
     # stop them start them. Stopping them if they are already stopped is OK.
-    - name: stop daemons
+    - name: stop workers
       sudo_user: www-data
-      command: rake RAILS_ENV=production daemons:stop
+      command: bundle exec RAILS_ENV=production script/delayed_job -n {{taverna_server_max_running}} --queue=player start
           chdir={{biovel_portal_install}}
 
     - name: start daemons
       sudo_user: www-data
-      command: rake RAILS_ENV=production daemons:start
+      command: bundle exec RAILS_ENV=production script/delayed_job stop
           chdir={{biovel_portal_install}}
 
     - name: install Passenger
