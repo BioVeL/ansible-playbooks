@@ -67,7 +67,8 @@
           owner=www-data group=www-data mode=0600
 
     - name: check MySQL adapter
-      shell: bundle list | grep " mysql"
+      shell: bundle list | grep \ mysql
+            chdir={{biovel_portal_install}}
       register: biovel_portal_mysql_adapters
 
     - name: configure portal database connections
