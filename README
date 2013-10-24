@@ -41,8 +41,27 @@ can provide a short name by adding the ansible_ssh_host setting.
 e.g. for a host called portalhost.example.com:
 portalhost ansible_ssh_host=portalhost.example.com
 
-The add the short name under the groups do indicate which services you wish to
-deploy on the host.
+Then add the short name under the groups to indicate which services you wish 
+to deploy on the host, e.g. for a basic portal supporting workflows using 
+local Rserve and Google Refine:
+
+[taverna-server]
+portalhost
+
+# Rserve, accessible only to local clients
+[rserve-local]
+portalhost
+
+# Rserve, accessible to remote network clients
+[rserve-remote]
+
+[biovel-portal]
+portalhost
+
+[taverna-workbench]
+
+[google-refine]
+portalhost
 
 
 Override default passwords
