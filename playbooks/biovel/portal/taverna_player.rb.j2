@@ -2,7 +2,7 @@
 
 TavernaPlayer.setup do |config|
 
-  config.player_hostname = "http://{{external_hostname}}"
+  config.player_hostname = "http://{{ansible_ssh_host}}"
 
   # This should be set to the name of the workflow model class in the main
   # application and the listed methods should also be mapped if necessary.
@@ -18,7 +18,7 @@ TavernaPlayer.setup do |config|
   end
 
   # Taverna Server configuration information. The poll interval is in seconds.
-  config.server_address = "http://{{external_hostname}}:8080/tavserv"
+  config.server_address = "http://{{ansible_ssh_host}}:8080/{{taverna_server_context}}"
   config.server_username = "{{taverna_server_user}}"
   config.server_password = "{{taverna_server_pass}}"
   config.server_poll_interval = 1
