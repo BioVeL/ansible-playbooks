@@ -30,7 +30,7 @@ TavernaPlayer.setup do |config|
   #
   # Add callbacks in this initializer or define them elsewhere and require the
   # file as usual (if they are not pulled in by some other code).
-  #require "callbacks" # See lib/callbacks.rb for these examples.
+  require "taverna_player_callbacks"
 
   # The pre-run callback is called before the run has started (before Taverna
   # Server is contacted, in fact).
@@ -43,7 +43,7 @@ TavernaPlayer.setup do |config|
   # It takes the run model object as its parameter.
   #config.post_run_callback = Proc.new { |run| puts "Finished: #{run.name}" }
   #config.post_run_callback = "player_post_run_callback"
-  #config.post_run_callback = :player_post_run_callback
+  config.post_run_callback = :player_post_run_callback
 
   # The run-cancelled callback is called if the run is cancelled by the user.
   # It takes the run model object as its parameter.
@@ -51,10 +51,12 @@ TavernaPlayer.setup do |config|
   #config.run_cancelled_callback = "player_run_cancelled_callback"
   #config.run_cancelled_callback = :player_run_cancelled_callback
 
-  #require "taverna_player_renderers.rb"
+  require "taverna_player_renderers.rb"
 
-  #config.output_renderers do |renderer|
-  #end
+  config.output_renderers do |renderer|
+    renderer.add("application/pdf", :inline_pdf)
+    renderer.add("application/x-error", :workflow_error)
+  end
 end
 
 # Example callbacks defined in the initializer.
