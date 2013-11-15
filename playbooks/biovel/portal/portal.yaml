@@ -45,6 +45,15 @@
             version={{taverna_lite_git_version}}
       notify: restart portal
 
+    - name: Fix Taverna Lite code
+      lineinfile: dest={{taverna_lite_install}}/app/assets/javascripts/taverna_lite/application.js
+            regexp="//= require dataTables/jquery.dataTables" insertbefore="//= require_tree ."
+            line="//= require dataTables/jquery.dataTables" backup=yes
+
+    - name: Fix Taverna Lite code 2
+      lineinfile: dest={{taverna_lite_install}}/app/assets/javascripts/taverna_lite/application.js
+            regexp="//= require jquery_ujs" state=absent
+
     - name: Create portal install directory
       file: name={{biovel_portal_install}} state=directory owner=www-data
 
@@ -56,6 +65,14 @@
       git: repo=https://github.com/scman1/portal.git dest={{biovel_portal_install}}
             version={{taverna_lite_portal_git_version}}
       notify: restart portal
+
+    # Git commit 4557413fbae3e62e6f944902199a6bd000810f60 reorders Javascript files, and breaks
+    # on new installs. The reason for the change is not explained, so revert this file to previous
+    # version.
+    - name: Fix portal code
+      sudo_user: www-data
+      command: /usr/bin/git checkout cb43b0597958eb1895dbfaae67c1c3c5413c38a0 app/assets/javascripts/application.js
+            chdir={{biovel_portal_install}}
 
     - name: Modify Gemfile
       lineinfile: "dest={{biovel_portal_install}}/Gemfile regexp=\"^gem 'taverna_lite'\" line=\"gem 'taverna_lite', :path => '{{taverna_lite_install}}'\""
