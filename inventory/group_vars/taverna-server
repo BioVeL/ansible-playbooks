@@ -11,3 +11,11 @@ taverna_server_workflow_lifetime: 2880
 # The taverna_server_maximum number of concurrently running workflows
 taverna_server_max_resident: 50
 taverna_server_max_running: 7
+
+# Version of Taverna Server to use. Must be one of the WARs from
+# http://code.google.com/p/biovel/source/browse/#svn%2Ftrunk%2Ftaverna%2Flib
+# server-webapp-2.4.3.war is the original Taverna Server 2.4.3 WAR including
+#     the interaction service plugin
+# taverna-server-sardine.war is a newer version from October 2013 including the
+#     Sardine WebDAV plugin
+taverna_server_war: server-webapp-2.4.3.war

@@ -35,11 +35,37 @@ hosts file.
 
 Update the host inventory
 =========================
-Ensure the inventory/hosts file contains the hosts you wish to manage.
+Ensure the inventory/hosts file contains the hosts you wish to manage. You
+can provide a short name by adding the ansible_ssh_host setting.
+
+e.g. for a host called portalhost.example.com:
+portalhost ansible_ssh_host=portalhost.example.com
+
+Then add the short name under the groups to indicate which services you wish 
+to deploy on the host, e.g. for a basic portal supporting workflows using 
+local Rserve and Google Refine:
+
+[taverna-server]
+portalhost
+
+# Rserve, accessible only to local clients
+[rserve-local]
+portalhost
+
+# Rserve, accessible to remote network clients
+[rserve-remote]
+
+[biovel-portal]
+portalhost
+
+[taverna-workbench]
+
+[google-refine]
+portalhost
 
 
-Override defaults
-=================
+Override default passwords
+==========================
 The files contained in the repository contain default usernames and passwords 
 for services and databases.  You can use these, but anyone with access to the 
 Github repository will know the passwords.
@@ -54,6 +80,53 @@ group_vars/biovel-portal.
 
 You can also create a host-specific file playbooks/host_vars/portalhost to 
 override group definitions.  Do not add these files to the repository!
+
+
+Create a portal secured by a certificate
+========================================
+To create a secure Apache server, add certificate and key files to the Ansible 
+directory playbooks/apache-httpd/secure
+
+Create the file playbooks/host_vars/<hostname>, where <hostname> is the 
+short name in the hosts file. Add the lines:
+---
+apache_https:
+  hostname: <certificate-fqdn>
+  privateKey: secure/<private-key-file>
+  certificate: secure/<certificate-file>
+  chainFile: secure/<ca-chain-file>
+
+e.g. in file playbooks/host_vars/portalhost:
+apache_https:
+  hostname: portalhost.example.com
+  privateKey: secure/host.key
+  certificate: secure/host.crt
+  chainFile: secure/chain.crt
+
+
+Transfer data from an existing portal
+=====================================
+If you have an existing portal running, you can transfer the database from the
+existing portal to the new portal using the following procedure:
+
+Login to the source portal, and execute the command:
+$ sudo <biovel-portal-install>/datactl.sh save <db-name> <data-zipfile>
+e.g.
+$ sudo /opt/BioVeLPortal/datactl.sh save tlite-prod data-20131024.zip
+
+Transfer the file <data-zipfile> to your local host, and put it in the Ansible
+directory playbooks/biovel/portal/data/
+
+Create the file playbooks/host_vars/<hostname>, where <hostname> is the 
+short name in the hosts file. Add the line:
+---
+biovel_portal_initial_data: data/<data-zipfile>
+
+e.g. in file playbooks/host_vars/portalhost:
+biovel_portal_initial_data: data/data-20131024.zip
+
+Note that this only works when the database is first created. It cannot be
+used to overwrite existing data.
 
 
 Configure the hosts

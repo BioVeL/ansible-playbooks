@@ -11,6 +11,6 @@ rserve_users:
 # * (anything else): Use OS package, which is usually out-of-date, compared to
 #         the packages for core R we obtain from the R repository
 #         However, it works.
-rserve_from: 'apt'
+rserve_from: 'github'
 
 rserve_git_version: tags/1.7-2

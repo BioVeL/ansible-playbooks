@@ -1,0 +1,23 @@
+---
+# R packages for Ocean Sampling Day workflow
+# Requires R > 3.0
+- hosts: rserve
+  sudo: yes
+  tasks:
+    - name: Install R packages from CRAN
+      shell: echo "options(repos=structure(c(CRAN='{{ cran_repository }}/')));if(require({{ item }})){}else{install.packages('{{ item }}')}" | /usr/bin/R --no-save
+      with_items:
+        - biom
+        - RColorBrewer
+        - vegan
+        - gplots
+        - calibrate
+        - ape
+        - picante
+        - Hmisc
+
+      notify: R changed
+
+  handlers:
+    - name: R changed
+      set_fact: r_changed=True
