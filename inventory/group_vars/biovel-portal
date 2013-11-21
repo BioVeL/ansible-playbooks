@@ -25,3 +25,6 @@ biovel_portal_site_key: 0295b98dbf2eeb5a33408786c86e99b3ccc31e69
 # Set this to a Google Analytics code for a particular host
 # CHANGE ME in playbooks/host_vars/<hostname>:
 biovel_portal_google_analytics_code: none
+
+# Set this to true to display error stack traces in the portal
+biovel_portal_debug: false
