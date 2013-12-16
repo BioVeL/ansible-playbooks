@@ -137,6 +137,6 @@ end
 # blank lines between them, making the log file more readable.
 class Logger
   def format_message(level, time, progname, msg)
-    "#{time.to_s(:db)} #{level} – #{msg}\n"
+    "#{time.to_s(:db)} #{level} - #{msg}\n"
   end
 end
