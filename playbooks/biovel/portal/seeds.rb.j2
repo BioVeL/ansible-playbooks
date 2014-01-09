@@ -8,14 +8,4 @@ TavernaPlayer::ServiceCredential.create(
 	:uri => 'rserve://localhost:6311',
 	:login => '{{rserve_users[0]["user"]}}',
 	:password => '{{rserve_users[0]["pass"]}}',
-	)
-
-User.create(
-	:name => '{{biovel_portal_admin_user}}',
-	:email => '{{biovel_portal_admin_email}}', 
-	:password => '{{biovel_portal_admin_pass}}',
-	:password_confirmation => nil, 
-	:admin => true,
-	:biovel => true, 
-	:type_id => 1
-	)
+)

@@ -1,11 +1,10 @@
 ---
-# Which version to checkout of Github - this can be HEAD, a named branch or tag, or a SHA
-# The scripts now only support Portal v0.5.0 or later, but may also work for
-# 0.4.0 branch from SHA 96cf2b6f74a7acaf417caa4304b1d508e24dec34
-biovel_portal_git_version: rh/player
+# Which version to checkout of BitBucket - this can be default, a named branch
+# or tag, or a SHA
+# The scripts now only support the new portal
+biovel_portal_version: default
 
 biovel_portal_install: /opt/BioVeLPortal
-biovel_portal_log: /opt/var/log/BioVeLPortal
 
 biovel_portal_admin_user: admin
 biovel_portal_admin_email: support@biovel.eu
@@ -17,14 +16,3 @@ biovel_portal_db_user: biovel
 biovel_portal_db_pass: biovel
 
 biovel_portal_initial_data: none
-
-# Site key needs to be same for all portals that share user registration
-# CHANGE ME in playbooks/group_vars/biovel-portal:
-biovel_portal_site_key: 0295b98dbf2eeb5a33408786c86e99b3ccc31e69
-
-# Set this to a Google Analytics code for a particular host
-# CHANGE ME in playbooks/host_vars/<hostname>:
-biovel_portal_google_analytics_code: none
-
-# Set this to true to display error stack traces in the portal
-biovel_portal_debug: false
