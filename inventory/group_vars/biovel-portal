@@ -5,6 +5,7 @@
 biovel_portal_version: default
 
 biovel_portal_install: /opt/BioVeLPortal
+biovel_portal_log: /opt/BioVeLPortal/log
 
 biovel_portal_admin_user: admin
 biovel_portal_admin_email: support@biovel.eu
