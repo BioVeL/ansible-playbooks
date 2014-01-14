@@ -63,6 +63,12 @@
       notify: restart portal
 
     # Solr must be started before we try and seed the database.
+    - name: Stop Solr
+      sudo_user: www-data
+      command: bundle exec rake RAILS_ENV=production sunspot:solr:stop
+          chdir={{biovel_portal_install}}
+
+    # Solr must be started before we try and seed the database.
     - name: Start Solr
       sudo_user: www-data
       command: bundle exec rake RAILS_ENV=production sunspot:solr:start
