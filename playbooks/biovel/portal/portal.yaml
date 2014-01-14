@@ -57,15 +57,16 @@
       template: src=taverna_server.rb.j2 dest={{biovel_portal_install}}/config/initializers/taverna_server.rb
           owner=www-data group=www-data mode=0600
 
-    # Solr must be started before we try and seed the database.
-    - name: Start Solr
-      sudo_user: www-data
-      command: bundle exec rake RAILS_ENV=production sunspot:solr:start
-
     - name: configure portal database connections
       sudo_user: www-data
       template: src=database.yml.j2 dest={{biovel_portal_install}}/config/database.yml mode=0600
       notify: restart portal
+
+    # Solr must be started before we try and seed the database.
+    - name: Start Solr
+      sudo_user: www-data
+      command: bundle exec rake RAILS_ENV=production sunspot:solr:start
+          chdir={{biovel_portal_install}}
 
     # To create the database, first check the current migration status
     - name: Checking status of database
