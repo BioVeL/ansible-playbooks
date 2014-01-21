@@ -2,7 +2,7 @@
 # Which version to checkout of BitBucket - this can be default, a named branch
 # or tag, or a SHA
 # The scripts now only support the new portal
-biovel_portal_version: default
+biovel_portal_version: 89ddc71
 
 biovel_portal_install: /opt/BioVeLPortal
 biovel_portal_log: /opt/BioVeLPortal/log
