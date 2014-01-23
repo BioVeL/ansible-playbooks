@@ -51,6 +51,7 @@ taverna-server
 
 [oracle-java-jre:children]
 google-refine
+apache-tomcat6
 taverna-workbench
 
 [mysql-server:children]
