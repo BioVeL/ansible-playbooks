@@ -1,0 +1,8 @@
+Unpack the Oracle JDK 1.7 Unlimited JCE Policy archive into this directory
+before starting.
+
+It is available here:
+http://www.oracle.com/technetwork/java/javase/downloads/jce-7-download-432124.html
+
+Once unpacked there should be a directory called "UnlimitedJCEPolicy" in this
+directory.
