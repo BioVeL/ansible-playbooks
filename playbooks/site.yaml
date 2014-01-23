@@ -24,6 +24,7 @@
 - include: biovel/workflows/mta.yaml
 - include: biovel/workflows/osd.yaml
 - include: biovel/workflows/psw.yaml
+- include: biovel/workflows/whales.yaml
 - include: rserve/rserve.yaml
 # Taverna Workbench
 - include: oracle-java/jre.yaml
