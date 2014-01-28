@@ -133,7 +133,7 @@
     # otherwise it won't start!
     - name: start seek worker
       sudo_user: www-data
-      shell: RAILS_ENV=production bundle exec ./script/delayed_job -i {{taverna_server_max_running}} start
+      shell: RAILS_ENV=production bundle exec ./script/delayed_job -i {{taverna_server_max_running}} --queue=default start
           chdir={{biovel_portal_install}}
 
     - name: install Passenger
