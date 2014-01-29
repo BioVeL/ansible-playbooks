@@ -50,7 +50,12 @@
     - name: install Ruby dependencies using bundler
       # this command is effectively idempotent, as it does not do anything if the dependencies
       # are already installed, and it is fast when nothing needs to be done
-      command: bundle install --deployment
+      #
+      # "LANG=en_US.UTF-8" fixes a problem in Ubuntu 12.04 when a gemspec
+      # contains non-ASCII characters, but Ruby thinks locale is ASCII because
+      # Ubuntu does not have any locale set. See
+      # https://github.com/rubygems/rubygems/issues/139
+      shell: LANG=en_US.UTF-8 bundle install --deployment
           chdir={{biovel_portal_install}}
 
     - name: create taverna_server.rb config file
@@ -62,12 +67,12 @@
       template: src=database.yml.j2 dest={{biovel_portal_install}}/config/database.yml mode=0600
       notify: restart portal
 
-    # Solr must be started before we try and seed the database.
+    # Stop Solr to ensure starting it does not fail
     - name: Stop Solr
       sudo_user: www-data
       command: bundle exec rake RAILS_ENV=production sunspot:solr:stop
           chdir={{biovel_portal_install}}
-      ignore_errors: yes
+          removes={{biovel_portal_install}}/solr/pids/production/sunspot-solr-production.pid
 
     # Solr must be started before we try and seed the database.
     - name: Start Solr
