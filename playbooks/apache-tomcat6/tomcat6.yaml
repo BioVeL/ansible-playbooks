@@ -17,7 +17,7 @@
             state=present backrefs=yes backup=yes
       notify: Restart Tomcat
 
-    - name: Use Orcale JRE 1.7
+    - name: Use Oracle JRE 1.7
       lineinfile: dest=/etc/default/tomcat6 insertafter='^#JAVA_HOME' line='JAVA_HOME=/opt/java/64/jre1.7.0_51'
             state=present backup=yes
       notify: Restart Tomcat
