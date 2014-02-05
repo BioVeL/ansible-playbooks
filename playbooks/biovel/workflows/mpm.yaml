@@ -13,6 +13,25 @@
         - popdemo
       notify: R changed
 
+    # popdemo was in the above list, but due to a non-answering email support
+    # address, has stopped being a supported CRAN package. So we need to use the
+    # special "install unsupported R package" incantation
+
+    - name: Install devtools package from CRAN
+      shell: echo "options(repos=structure(c(CRAN='{{ cran_repository }}/')));if(require({{ item }})){}else{install.packages('{{ item }}')}" | /usr/bin/R --no-save
+      with_items:
+        - devtools
+
+    - name: Install popdemo package from CRAN archive
+      shell: echo "options(repos=structure(c(CRAN='{{ cran_repository }}/')));library(devtools);if(require({{ item }})){}else{install_url('http://cran.r-project.org/src/contrib/Archive/popdemo/popdemo_0.1-3.tar.gz')}" | /usr/bin/R --no-save
+      with_items:
+        - quadprog
+        - popbio
+        - Matrix
+        - expm
+        - popdemo
+      notify: R changed
+
   handlers:
     - name: R changed
       set_fact: r_changed=True
