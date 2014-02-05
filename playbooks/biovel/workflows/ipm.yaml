@@ -13,6 +13,8 @@
         - MASS
         - nlme
         - mvtnorm
+        - MCMCglmm
+        - truncnorm
         - IPMpack
       notify: R changed
 
