@@ -13,6 +13,10 @@ These Ansible playbooks work with BioVeL Portal 0.5.0
 For Portal versions 0.3.7/0.4.0, please checkout the playbooks with the tag 
 "portal0.4.0".
 
+The local host requires Python 2.7, and the Python YAML and Jinja2 libraries.
+For Ubuntu 12.04, Python 2.7 should be installed. Install the other libraries
+using:
+$ sudo apt-get install python-yaml python-jinja2
 
 Configure ssh public key access
 ===============================
