@@ -65,6 +65,7 @@
         Allow from all
     </Directory>
     <IfModule expires_module>
+        # Ruby on Rails 3 asset pipeline caching
         <Directory {{biovel_portal_install}}/public/assets>
             # This directory contains static assets for the Rails application.
             # See http://guides.rubyonrails.org/asset_pipeline.html#far-future-expires-header
@@ -95,6 +96,23 @@
                 # longer time
                 ExpiresDefault "access plus 1 year"
             </FilesMatch>
+        </Directory>
+        # The SEEK portal uses the Rails 2 structure, which requires a
+        # different solution to make caching work correctly.  Static files
+        # have a 10-digit query string containing a timestamp.  See
+        # http://bibwild.wordpress.com/2010/09/22/browser-caching-of-rails-assets-for-real/
+        <Directory {{biovel_portal_install}}/public>
+            RewriteEngine On
+            # Convert requests with a 10-digit querystring to pass through the
+            # path /cached/ (a symlink to the public directory i.e. null op) 
+            RewriteCond %{QUERY_STRING} ^[0-9]{10}$
+            RewriteRule ^((images|javascripts|stylesheets).*)$ /cached/$1 [PT]
+        </Directory>
+        # Anything which gets the above treatment had a timestamp in the
+        # querystring, so can be returned with a long expiry date
+        <Directory {{biovel_portal_install}}/public/cached>
+            ExpiresActive On
+            ExpiresDefault "access plus 1 day"
         </Directory>
     </IfModule>
  

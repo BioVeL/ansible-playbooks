@@ -171,6 +171,12 @@
           creates=/etc/apache2/mods-enabled/rewrite.load
       notify: restart portal
 
+    # Rails 2 caching, see:
+    # http://bibwild.wordpress.com/2010/09/22/browser-caching-of-rails-assets-for-real/
+    - name: create long expiry link
+      file: state=link src={{biovel_portal_install}}/public
+            path={{biovel_portal_install}}/public/cached
+
     - name: add Virtual Host to Apache
       template: src=vhost.j2 dest=/etc/apache2/sites-available/tlite
       notify: restart portal
