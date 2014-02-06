@@ -5,7 +5,7 @@
   sudo: yes
   tasks:
     - name: Install R packages from CRAN
-      shell: echo "options(repos=structure(c(CRAN='{{ cran_repository }}/')));if(require({{ item }})){}else{install.packages('{{ item }}')}" | /usr/bin/R --no-save
+      shell: echo "options(repos=structure(c(CRAN='{{ cran_repository }}/')));if(require({{ item }})){}else{install.packages('{{ item }}');library({{ item }})}" | /usr/bin/R --no-save
       with_items:
         - biom
         - RColorBrewer
