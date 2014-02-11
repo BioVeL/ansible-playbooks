@@ -62,6 +62,9 @@
       template: src=taverna_server.rb.j2 dest={{biovel_portal_install}}/config/initializers/taverna_server.rb
           owner=www-data group=www-data mode=0600
 
+    - name: add mail server to production.rb
+      lineinfile: "dest={{biovel_portal_install}}/config/environments/production.rb insertafter='config.action_mailer.raise_delivery_errors' line='  config.action_mailer.delivery_method = :sendmail' state=present backup=yes"
+
     - name: configure portal database connections
       sudo_user: www-data
       template: src=database.yml.j2 dest={{biovel_portal_install}}/config/database.yml mode=0600
