@@ -5,3 +5,6 @@
   tasks:
     - name: Install sendmail
       apt: pkg=sendmail state=latest
+
+    - include: gmail.yml
+      when: "'{{biovel_portal_gmail_pass}}' != 'biovel'"

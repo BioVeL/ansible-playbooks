@@ -12,6 +12,10 @@ biovel_portal_admin_email: support@biovel.eu
 # CHANGE ME in playbooks/group_vars/biovel-portal:
 biovel_portal_admin_pass: biovel
 
+biovel_portal_gmail_user: biovel.eu@gmail.com
+# CHANGE ME in playbooks/group_vars/biovel-portal:
+biovel_portal_gmail_pass: biovel
+
 biovel_portal_db_user: biovel
 # CHANGE ME in playbooks/group_vars/biovel-portal:
 biovel_portal_db_pass: biovel
