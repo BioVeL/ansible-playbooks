@@ -10,7 +10,9 @@ There are definitely problems awaiting users of non-APT distributions - all
 the plays using `&apt` will need an equivalent for these other distributions.
 
 For Portal versions 0.7+, checkout the branch `player`.
+
 For Portal versions 0.5/0.6, checkout the branch `legacy`.
+
 For Portal versions 0.3.7/0.4.0, checkout the tag `portal0.4.0`.
 
 The local host requires Python 2.7, and the Python YAML and Jinja2 libraries.
