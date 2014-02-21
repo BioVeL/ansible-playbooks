@@ -43,8 +43,16 @@
     RewriteEngine On
     RewriteCond %{REQUEST_METHOD} !=POST
 {%     if apache_port == 80 %}
-    # Redirect everything except /runs/* to HTTPS
-    RewriteRule ^/(?!runs/.) https://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]
+    # Redirect to HTTPS. We want to convert back to HTTPS as early as possible,
+    # but we want to avoid redirecting Javascript, etc, and slowing down loading
+    # of run pages. So only redirect on pages explicitly known to work using
+    # HTTPS.
+    # Top-level page:
+    RewriteRule ^/$ https://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]
+    # Top-level Runs page:
+    RewriteRule ^/runs/$ https://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]
+    # Most other sections:
+    RewriteRule ^/(admin|people|workflows)/ https://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]    
 {%     else %} {#- apache_port == 443 #}
     # Redirect /runs/* to HTTP
     RewriteRule ^/runs/. http://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]
