@@ -76,6 +76,7 @@
       command: bundle exec rake RAILS_ENV=production sunspot:solr:stop
           chdir={{biovel_portal_install}}
           removes={{biovel_portal_install}}/solr/pids/production/sunspot-solr-production.pid
+      ignore_errors: yes
 
     # Solr must be started before we try and seed the database.
     - name: Start Solr
