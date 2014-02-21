@@ -7,10 +7,10 @@
 
 - hosts: google-refine
   vars:
-    google_refine_install: "/opt/GoogleRefine"
-    google_refine_home: "/opt/var/GoogleRefine"
-    google_refine_log: "/opt/var/GoogleRefine"
-    google_refine_data: "/opt/var/GoogleRefine/data"
+    google_refine_install: "{{base_folder}}/GoogleRefine"
+    google_refine_home: "{{base_folder}}/var/GoogleRefine"
+    google_refine_log: "{{base_folder}}/var/GoogleRefine"
+    google_refine_data: "{{base_folder}}/var/GoogleRefine/data"
     refine_changed: 
   sudo: yes
   tasks:
