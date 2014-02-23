@@ -92,9 +92,9 @@
 
     # If the database is empty (no migration status), and we have no data dump to initialise it,
     # then use db:setup (= db:schema:load followed by db:seed)
-    # - name: Create database seed file
-    #   sudo_user: www-data
-    #   template: src=seeds.rb.j2 dest={{biovel_portal_install}}/db/seeds.rb mode=0600
+    - name: Create database seed file
+      sudo_user: www-data
+      template: src=seeds.rb.j2 dest={{biovel_portal_install}}/db/seeds.rb mode=0600 backup=yes
 
     - name: Initial setup of database
       command: bundle exec rake RAILS_ENV=production db:setup
