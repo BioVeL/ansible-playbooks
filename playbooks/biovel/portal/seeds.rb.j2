@@ -108,12 +108,14 @@ guest_institution = Institution.where(:name => guest_inst[:name], :country => gu
 guest_workgroup = WorkGroup.where(:project_id => guest_project.id, :institution_id => guest_institution.id).first ||
     WorkGroup.create(:project_id => guest_project.id, :institution_id => guest_institution.id)
 
+# Portal requires unique email addresses, so guest email address must be
+# different to admin email address
 guest_user = User.find_by_login('guest') ||
-    User.create(:login => 'guest', :email => '{{biovel_portal_admin_email}}',
+    User.create(:login => 'guest', :email => 'guest@example.com',
       :password => 'guest', :password_confirmation => 'guest')
 
 guest_user.activate
-guest_user.person ||= Person.create(:first_name => 'Guest', :last_name => 'User', :email => '{{biovel_portal_admin_email}}')
+guest_user.person ||= Person.create(:first_name => 'Guest', :last_name => 'User', :email => 'guest@example.com')
 guest_user.save
 guest_user.person.work_groups << guest_workgroup
 puts 'Seeded the Guest user.'
