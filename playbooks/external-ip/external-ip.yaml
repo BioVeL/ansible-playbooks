@@ -7,7 +7,7 @@
 # For non-EC2 hosts, use a detected external IP address
 
 - hosts: external-ip:!amazon:&apt
-  sudo: yes
+  sudo: true
   tasks:
     - name: Install curl
       apt: name=curl state=present

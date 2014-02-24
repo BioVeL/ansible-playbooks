@@ -1,6 +1,6 @@
 ---
 - hosts: google-refine:&apt
-  sudo: yes
+  sudo: true
   tasks:
     - name: Install CURL (used by refine init script)
       apt: pkg=curl state=present
@@ -11,8 +11,8 @@
     google_refine_home: "{{base_folder}}/var/GoogleRefine"
     google_refine_log: "{{base_folder}}/var/GoogleRefine"
     google_refine_data: "{{base_folder}}/var/GoogleRefine/data"
-    refine_changed: 
-  sudo: yes
+    refine_changed:
+  sudo: true
   tasks:
     - name: Create a Refine group
       group: name=refine system=yes state=present
@@ -56,20 +56,20 @@
 
 # For systems that use update-rc.d, run the command manually to enable starting on reboot
 - hosts: google-refine:&apt
-  sudo: yes
+  sudo: true
   tasks:
     - name: Start Google Refine on reboot
       command: update-rc.d refine defaults
 
 # For other systems, use the service module.
 - hosts: google-refine:!apt
-  sudo: yes
+  sudo: true
   tasks:
     - name: Start Google Refine on reboot
       service: name=refine enabled=yes
 
 - hosts: google-refine
-  sudo: yes
+  sudo: true
   tasks:
     - name: Start Google Refine service
       service: name=refine state=started

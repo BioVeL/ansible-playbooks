@@ -4,20 +4,20 @@
 # d8b2342 = 0.8.0-10585
 biovel_portal_version: d8b2342
 
-biovel_portal_install: "{{base_folder}}/BioVeLPortal"
-biovel_portal_log: "{{base_folder}}/BioVeLPortal/log"
+biovel_portal_install: '{{base_folder}}/BioVeLPortal'
+biovel_portal_log: '{{base_folder}}/BioVeLPortal/log'
 
 biovel_portal_admin_user: admin
 biovel_portal_admin_email: support@biovel.eu
 # CHANGE ME in playbooks/group_vars/biovel-portal:
-biovel_portal_admin_pass: biovel
+biovel_portal_admin_pass: 'biovel'
 
 biovel_portal_gmail_user: biovel.eu@gmail.com
 # CHANGE ME in playbooks/group_vars/biovel-portal:
-biovel_portal_gmail_pass: biovel
+biovel_portal_gmail_pass: 'biovel'
 
 biovel_portal_db_user: biovel
 # CHANGE ME in playbooks/group_vars/biovel-portal:
-biovel_portal_db_pass: biovel
+biovel_portal_db_pass: 'biovel'
 
 biovel_portal_initial_data: none

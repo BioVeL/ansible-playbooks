@@ -1,9 +1,9 @@
 ---
-- hosts: "biovel-portal:&apt"
-  sudo: yes
+- hosts: 'biovel-portal:&apt'
+  sudo: true
   tasks:
-    - name: "Install portal package dependencies"
-      action: apt pkg={{ item }} state=present
+    - name: Install portal package dependencies
+      action: 'apt pkg={{ item }} state=present'
       with_items:
         - libcurl4-gnutls-dev
         - libxml2-dev
@@ -18,33 +18,46 @@
         - mercurial      # to obtain portal source code
         - python-mysqldb # required for Ansible mysql modules
 
-    - name: "Force ruby 1.9 to be default ruby"
-      command: update-alternatives --install /usr/bin/ruby ruby /usr/bin/ruby1.9.1 400 --slave /usr/share/man/man1/ruby.1.gz ruby.1.gz /usr/share/man/man1/ruby1.9.1.1.gz --slave /usr/bin/ri ri /usr/bin/ri1.9.1 --slave /usr/bin/irb irb /usr/bin/irb1.9.1 --slave /usr/bin/rdoc rdoc /usr/bin/rdoc1.9.1
+    - name: Force ruby 1.9 to be default ruby
+      command: >
+        update-alternatives --install /usr/bin/ruby ruby /usr/bin/ruby1.9.1 400
+        --slave /usr/share/man/man1/ruby.1.gz ruby.1.gz /usr/share/man/man1/ruby1.9.1.1.gz
+        --slave /usr/bin/ri ri /usr/bin/ri1.9.1
+        --slave /usr/bin/irb irb /usr/bin/irb1.9.1
+        --slave /usr/bin/rdoc rdoc /usr/bin/rdoc1.9.1
 
 - hosts: biovel-portal
-  sudo: yes
+  sudo: true
   tasks:
     - name: Install Ruby gem bundler
       gem: name=bundler version=1.3.1 state=present user_install=no
 
     - name: Add BioVeL Portal database
-      mysql_db: name={{item}} state=present
+      mysql_db: 'name={{item}} state=present'
       with_items:
         - seek_production
         - seek_development
         - seek_test
 
     - name: Add BioVeL Portal database user
-      mysql_user: name={{biovel_portal_db_user}} password={{biovel_portal_db_pass}} state=present
-            "priv=seek_production.*:ALL/seek_development.*:ALL/seek_test.*:ALL"
+      mysql_user: >
+        name={{biovel_portal_db_user}}
+        password={{biovel_portal_db_pass}}
+        state=present
+        priv=seek_production.*:ALL/seek_development.*:ALL/seek_test.*:ALL
 
     - name: Create portal install directory
-      file: name={{biovel_portal_install}} state=directory owner=www-data
+      file: >
+        name={{biovel_portal_install}}
+        state=directory
+        owner=www-data
 
     - name: Get portal code
       sudo_user: www-data
-      hg: repo=https://bitbucket.org/fbacall/biovel-portal dest={{biovel_portal_install}}
-            revision={{biovel_portal_version}}
+      hg: >
+        repo=https://bitbucket.org/fbacall/biovel-portal
+        dest={{biovel_portal_install}}
+        revision={{biovel_portal_version}}
       notify: restart portal
 
     - name: install Ruby dependencies using bundler
@@ -55,15 +68,23 @@
       # contains non-ASCII characters, but Ruby thinks locale is ASCII because
       # Ubuntu does not have any locale set. See
       # https://github.com/rubygems/rubygems/issues/139
-      shell: LANG=en_US.UTF-8 bundle install --deployment
-          chdir={{biovel_portal_install}}
+      shell: >
+        LANG=en_US.UTF-8 bundle install --deployment
+        chdir={{biovel_portal_install}}
 
     - name: create taverna_server.rb config file
-      template: src=taverna_server.rb.j2 dest={{biovel_portal_install}}/config/initializers/taverna_server.rb
-          owner=www-data group=www-data mode=0600
+      template: >
+        src=taverna_server.rb.j2
+        dest={{biovel_portal_install}}/config/initializers/taverna_server.rb
+        owner=www-data group=www-data mode=0600
 
     - name: add mail server to production.rb
-      lineinfile: "dest={{biovel_portal_install}}/config/environments/production.rb insertafter='config.action_mailer.raise_delivery_errors' line='  config.action_mailer.delivery_method = :sendmail' state=present backup=yes"
+      lineinfile: >
+        dest={{biovel_portal_install}}/config/environments/production.rb
+        insertafter='config.action_mailer.raise_delivery_errors'
+        line='  config.action_mailer.delivery_method = :sendmail'
+        state=present
+        backup=yes
 
     - name: configure portal database connections
       sudo_user: www-data
@@ -73,10 +94,11 @@
     # Stop Solr to ensure starting it does not fail
     - name: Stop Solr
       sudo_user: www-data
-      command: bundle exec rake RAILS_ENV=production sunspot:solr:stop
-          chdir={{biovel_portal_install}}
-          removes={{biovel_portal_install}}/solr/pids/production/sunspot-solr-production.pid
-      ignore_errors: yes
+      command: >
+        bundle exec rake RAILS_ENV=production sunspot:solr:stop
+        chdir={{biovel_portal_install}}
+        removes={{biovel_portal_install}}/solr/pids/production/sunspot-solr-production.pid
+      ignore_errors: true
 
     # Solr must be started before we try and seed the database.
     - name: Start Solr
@@ -118,8 +140,9 @@
     # exists, it will ensure that the database is at the right migration level for this version of the portal
     - name: setup databases
       sudo_user: www-data
-      command: bundle exec rake RAILS_ENV=production db:migrate
-            chdir={{biovel_portal_install}}
+      command: >
+        bundle exec rake RAILS_ENV=production db:migrate
+        chdir={{biovel_portal_install}}
 
     # TODO - we need to ensure these workers are started at boot time
     # we also need to restart them if they are running. Easiest is just to
@@ -127,23 +150,28 @@
     # We can stop all workers in one go.
     - name: stop workers
       sudo_user: www-data
-      shell: RAILS_ENV=production bundle exec ./script/delayed_job stop
-          chdir={{biovel_portal_install}}
+      shell: >
+        RAILS_ENV=production bundle exec ./script/delayed_job stop
+        chdir={{biovel_portal_install}}
 
     # We need to start the workers in two groups as we have Taverna Player
     # workers and a SEEK worker.
     - name: start taverna player workers
       sudo_user: www-data
-      shell: RAILS_ENV=production bundle exec ./script/delayed_job -n {{taverna_server_max_running}} --queue=player start
-          chdir={{biovel_portal_install}}
+      shell: >
+        RAILS_ENV=production bundle exec ./script/delayed_job
+        -n {{taverna_server_max_running}} --queue=player start
+        chdir={{biovel_portal_install}}
 
     # Note here that we specify the SEEK worker id (with -i) to be one greater
     # than the id of the last Taverna Player worker (which are numbered from 0)
     # otherwise it won't start!
     - name: start seek worker
       sudo_user: www-data
-      shell: RAILS_ENV=production bundle exec ./script/delayed_job -i {{taverna_server_max_running}} --queue=default start
-          chdir={{biovel_portal_install}}
+      shell: >
+        RAILS_ENV=production bundle exec ./script/delayed_job
+        -i {{taverna_server_max_running}} --queue=default start
+        chdir={{biovel_portal_install}}
 
     - name: install Passenger
       gem: name=passenger state=present user_install=no
@@ -156,23 +184,27 @@
       #register: passenger_apache
 
     - name: add Passenger configuration
-      shell: passenger-install-apache2-module --snippet > /etc/apache2/mods-available/passenger.load
-          creates=/etc/apache2/mods-available/passenger.load
+      shell: >
+        passenger-install-apache2-module --snippet > /etc/apache2/mods-available/passenger.load
+        creates=/etc/apache2/mods-available/passenger.load
 
     - name: enable Apache Passenger module
-      command: a2enmod passenger
-          creates=/etc/apache2/mods-enabled/passenger.load
+      command: >
+        a2enmod passenger
+        creates=/etc/apache2/mods-enabled/passenger.load
       notify: restart portal
 
     - name: enable Apache Expires module
       # see http://guides.rubyonrails.org/asset_pipeline.html#far-future-expires-header
-      command: a2enmod expires
-          creates=/etc/apache2/mods-enabled/expires.load
+      command: >
+        a2enmod expires
+        creates=/etc/apache2/mods-enabled/expires.load
       notify: restart portal
 
     - name: enable Apache Rewrite module
-      command: a2enmod rewrite
-          creates=/etc/apache2/mods-enabled/rewrite.load
+      command: >
+        a2enmod rewrite
+        creates=/etc/apache2/mods-enabled/rewrite.load
       notify: restart portal
 
     # Rails 2 caching, see:

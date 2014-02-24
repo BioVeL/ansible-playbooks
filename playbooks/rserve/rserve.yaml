@@ -1,6 +1,6 @@
 ---
 - hosts: rserve:&apt
-  sudo: yes
+  sudo: true
   tasks:
 
     - name: Install Rserve package from APT
@@ -16,7 +16,7 @@
         - git
 
 - hosts: rserve
-  sudo: yes
+  sudo: true
   tasks:
     # There is a package for Rserve in Ubuntu 12.04 (r-cran-rserve) but it is
     # compiled for R 2.14 in the default repository, so we retrieve the latest
@@ -60,7 +60,7 @@
       set_fact: r_changed=True
 
 - hosts: rserve
-  sudo: yes
+  sudo: true
   tasks:
     - name: Restart R server
       service: name=rserve state=stopped
@@ -74,14 +74,14 @@
 
 # For systems that use update-rc.d, run the command manually to enable starting on reboot
 - hosts: rserve:&apt
-  sudo: yes
+  sudo: true
   tasks:
     - name: Start Rserve on reboot
       command: update-rc.d rserve defaults
 
 # For other systems, use the service module.
 - hosts: rserve:!apt
-  sudo: yes
+  sudo: true
   tasks:
     - name: Start Rserve on reboot
       service: name=rserve enabled=yes

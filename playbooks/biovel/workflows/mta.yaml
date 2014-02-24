@@ -1,7 +1,7 @@
 ---
 # R packages for Metagenomics Traits Analysis workflow
 - hosts: rserve
-  sudo: yes
+  sudo: true
   tasks:
     - name: Install R packages from CRAN
       shell: echo "options(repos=structure(c(CRAN='{{ cran_repository }}/')));if(require({{ item }})){}else{install.packages('{{ item }}');library({{ item }})}" | /usr/bin/R --no-save

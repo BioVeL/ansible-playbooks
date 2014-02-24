@@ -9,7 +9,7 @@
     - group_by: key={{ ansible_pkg_mgr }}
 
 - hosts: apt
-  sudo: yes
+  sudo: true
   tasks:
     - name: Update apt repository
       apt: update_cache=yes cache_valid_time=3600

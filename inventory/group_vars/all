@@ -5,7 +5,7 @@ ntp_hosts:
   - uk.pool.ntp.org
   - europe.pool.ntp.org
 
-cran_repository: "http://www.stats.bris.ac.uk/R"
+cran_repository: 'http://www.stats.bris.ac.uk/R'
 
 # base_folder: the top-level directory containing the BioVeL tools and services.
 # Each subsystem has its own directory which will be a sub-directory of this one

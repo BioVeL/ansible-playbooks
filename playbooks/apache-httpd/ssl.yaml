@@ -3,19 +3,26 @@
   file: name=/etc/apache2/ssl state=directory owner=root mode=0700
 
 - name: Copy Apache CA chain
-  copy: src={{apache_https["chainFile"]}} dest=/etc/apache2/ssl/chain.crt
+  copy: >
+    src={{apache_https["chainFile"]}}
+    dest=/etc/apache2/ssl/chain.crt
   notify: stop Apache for reconfiguration
 
 - name: Copy Apache certificate
-  copy: src={{apache_https["certificate"]}} dest=/etc/apache2/ssl/{{apache_https["hostname"]}}.crt
+  copy: >
+    src={{apache_https["certificate"]}}
+    dest=/etc/apache2/ssl/{{apache_https["hostname"]}}.crt
   notify: stop Apache for reconfiguration
 
 - name: Copy Apache key
-  copy: src={{apache_https["privateKey"]}} dest=/etc/apache2/ssl/{{apache_https["hostname"]}}.key
-        owner=root mode=0400
+  copy: >
+    src={{apache_https["privateKey"]}}
+    dest=/etc/apache2/ssl/{{apache_https["hostname"]}}.key
+    owner=root  mode=0400
   notify: stop Apache for reconfiguration
 
 - name: enable Apache SSL module
-  command: a2enmod ssl
-      creates=/etc/apache2/mods-enabled/ssl.load
+  command: >
+    a2enmod ssl
+    creates=/etc/apache2/mods-enabled/ssl.load
   notify: stop Apache for reconfiguration
