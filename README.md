@@ -9,7 +9,9 @@ using later versions of Ubuntu or other distributions.
 There are definitely problems awaiting users of non-APT distributions - all 
 the plays using `&apt` will need an equivalent for these other distributions.
 
-For Portal versions 0.7+, checkout the branch `player`.
+For Portal versions 0.8, checkout the branch `master`.
+
+For Portal versions 0.7/0.8 (up to 0.8.0-10585 SHA d8b2342), checkout the branch `player`.
 
 For Portal versions 0.5/0.6, checkout the branch `legacy`.
 
