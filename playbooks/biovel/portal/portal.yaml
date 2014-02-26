@@ -91,6 +91,14 @@
       template: src=database.yml.j2 dest={{biovel_portal_install}}/config/database.yml mode=0600
       notify: restart portal
 
+    - name: precompile assets
+      # Requires database.yml to be configured
+      # TODO - assets only get precompiled when application.js does not exist - it would be nice to
+      # re-run it when the Git repository gets updated
+      sudo_user: www-data
+      command: bundle exec rake assets:precompile
+            chdir={{biovel_portal_install}} creates={{biovel_portal_install}}/public/assets/application.js
+
     # Stop Solr to ensure starting it does not fail
     - name: Stop Solr
       sudo_user: www-data
@@ -206,12 +214,6 @@
         a2enmod rewrite
         creates=/etc/apache2/mods-enabled/rewrite.load
       notify: restart portal
-
-    # Rails 2 caching, see:
-    # http://bibwild.wordpress.com/2010/09/22/browser-caching-of-rails-assets-for-real/
-    - name: create long expiry link
-      file: state=link src={{biovel_portal_install}}/public
-            path={{biovel_portal_install}}/public/cached
 
     - name: add Virtual Host to Apache
       template: src=vhost.j2 dest=/etc/apache2/sites-available/tlite
