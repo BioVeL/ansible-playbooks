@@ -2,6 +2,11 @@
 #
 encoding utf8
 
+# Non-interactive behaviour is more intuitive on a server. Generally causes
+# errors to exit with an error status, and some calls to behave differently,
+# by not trying to use a non-existent terminal, display, etc.
+interactive no
+
 # Location of password file
 #
 pwdfile /etc/Rserv.pass

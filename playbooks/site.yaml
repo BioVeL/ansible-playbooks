@@ -9,7 +9,7 @@
     - group_by: key={{ ansible_pkg_mgr }}
 
 - hosts: apt
-  sudo: yes
+  sudo: true
   tasks:
     - name: Update apt repository
       apt: update_cache=yes cache_valid_time=3600
@@ -34,7 +34,6 @@
 # Everything needed for Taverna Server
 - include: unzip/unzip.yaml
 - include: apache-tomcat6/tomcat6.yaml
-- include: atomhopper/atomhopper.yaml
 - include: taverna-server/tserver.yaml
 # Everything needed for DRW workflow
 - include: google/refine/refine.yaml

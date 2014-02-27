@@ -4,3 +4,5 @@ playbooks/group_vars/
 playbooks/host_vars/
 playbooks/apache-httpd/secure/
 playbooks/biovel/portal/data/
+playbooks/oracle-java/JCE/UnlimitedJCEPolicy/
+playbooks/oracle-java/JCE/*.zip

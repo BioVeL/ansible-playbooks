@@ -1,0 +1,10 @@
+log4j.rootLogger=info, R
+log4j.category.DataNucleus.Query=warn
+
+log4j.appender.R=org.apache.log4j.RollingFileAppender
+log4j.appender.R.File={{taverna_server_log}}/tavserv.out
+log4j.appender.R.MaxFileSize=10MB
+log4j.appender.R.MaxBackupIndex=30
+log4j.appender.R.layout=org.apache.log4j.PatternLayout
+log4j.appender.R.layout.ConversionPattern=%d{yyyyMMdd'T'HHmmss.SSS} %-5p %c{1} %C{1} - %m%n
+

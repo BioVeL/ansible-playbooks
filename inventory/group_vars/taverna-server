@@ -3,12 +3,13 @@ taverna_server_context: tserver
 taverna_server_user: taverna
 taverna_server_pass: taverna
 
-taverna_server_install: /opt/TavernaServer
-taverna_server_log: /opt/var/log/TavernaServer
+taverna_server_install: '{{base_folder}}/TavernaServer'
+taverna_server_log: '{{base_folder}}/var/log/TavernaServer'
 
 # The maximum time in minutes that a workflow may run (1440 = 1 day)
 taverna_server_workflow_lifetime: 2880
 # The taverna_server_maximum number of concurrently running workflows
+taverna_server_max_resident: 50
 taverna_server_max_running: 7
 
 # Version of Taverna Server to use. Must be one of the WARs from

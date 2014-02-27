@@ -1,0 +1,33 @@
+# This is a Java properties file that defines the default users supported by
+# Taverna Server. The keys are the user names, and the values are comma-
+# -separated lists of values: the first is the password (which must not have
+# any spaces or commas in) and the last is "enabled" or "disabled" to indicate
+# whether this user is actually allowed to log in or not. The values between
+# are the authorities associated with the user: these are either roles (which
+# describe a particular set of permissions for the user) or user mappings.
+#
+# The supported set of authorities are:
+#
+#   ROLE_tavernauser      - may use the standard Taverna Server interfaces
+#
+#   ROLE_tavernasuperuser - may use the admin interfaces and see *all*
+#                           workflow runs irrespective of permissions
+#
+#   LOCALUSER_*           - map the server user to the given local system
+#                           account (i.e., the account name is in place of the
+#                           "*" in the authority); don't grant two of these
+#                           authorities at once, or confusion will reign
+#
+# Note that it is usually better to define accounts via the administrative
+# interface or through the JMX interface because those can then be modified
+# without restarting the server; anything in this file is fixed until the
+# next server restart. This file exists mainly to allow permissions for the
+# admin interface to be boot-strapped.
+
+# ---------------------------------------------------------------------
+
+# A normal user. Must have given role (ROLE_tavernauser) to use Taverna Server.
+# The user has password "taverna" and is enabled. The default mapping to user
+# accounts - using the user name - will be used.
+
+{{taverna_server_user}}: {{taverna_server_pass}},ROLE_tavernauser,ROLE_tavernasuperuser,enabled

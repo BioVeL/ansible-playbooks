@@ -1,6 +1,6 @@
 ---
 - hosts: oracle-java-jre:&apt
-  sudo: yes
+  sudo: true
   tasks:
     - name: Add package python-software-properties
       apt: pkg=python-software-properties state=present
@@ -18,7 +18,16 @@
       apt: update_cache=yes
 
 - hosts: oracle-java-jre:&apt
-  sudo: yes
+  sudo: true
   tasks:
     - name: Install Oracle JRE
       apt: pkg=update-sun-jre state=present
+
+- hosts: oracle-java-jre
+  sudo: true
+  tasks:
+    - name: Copy JCE local policy file
+      copy: src=JCE/UnlimitedJCEPolicy/local_policy.jar dest=/opt/java/64/jre1.7.0_51/lib/security/local_policy.jar backup=yes
+
+    - name: Copy JCE US export policy file
+      copy: src=JCE/UnlimitedJCEPolicy/US_export_policy.jar dest=/opt/java/64/jre1.7.0_51/lib/security/US_export_policy.jar backup=yes

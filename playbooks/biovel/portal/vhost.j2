@@ -43,11 +43,19 @@
     RewriteEngine On
     RewriteCond %{REQUEST_METHOD} !=POST
 {%     if apache_port == 80 %}
-    # Redirect everything except /runs/* to HTTPS
-    RewriteRule ^/(?!runs/.) https://{{apache_https["hostname"]}}%{REQUEST_URI}%{QUERY_STRING} [R,L]
+    # Redirect to HTTPS. We want to convert back to HTTPS as early as possible,
+    # but we want to avoid redirecting Javascript, etc, and slowing down loading
+    # of run pages. So only redirect on pages explicitly known to work using
+    # HTTPS.
+    # Top-level page:
+    RewriteRule ^/$ https://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]
+    # Top-level Runs page:
+    RewriteRule ^/runs/$ https://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]
+    # Most other sections:
+    RewriteRule ^/(admin|people|workflows)/ https://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]    
 {%     else %} {#- apache_port == 443 #}
     # Redirect /runs/* to HTTP
-    RewriteRule ^/runs/. http://{{apache_https["hostname"]}}%{REQUEST_URI}%{QUERY_STRING} [R,L]
+    RewriteRule ^/runs/. http://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]
 
     SSLEngine on
     SSLCertificateFile /etc/apache2/ssl/{{apache_https["hostname"]}}.crt
@@ -65,6 +73,7 @@
         Allow from all
     </Directory>
     <IfModule expires_module>
+        # Ruby on Rails 3 asset pipeline caching
         <Directory {{biovel_portal_install}}/public/assets>
             # This directory contains static assets for the Rails application.
             # See http://guides.rubyonrails.org/asset_pipeline.html#far-future-expires-header

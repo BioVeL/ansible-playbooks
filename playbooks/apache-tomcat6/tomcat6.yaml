@@ -1,31 +1,35 @@
 ---
-- hosts: apache-tomcat6:&apt
-  sudo: yes
+- hosts: 'apache-tomcat6:&apt'
+  sudo: true
   tasks:
 
     - name: Install Tomcat 6
-      apt: pkg={{item}} state=present
+      apt: 'pkg={{item}} state=present'
       with_items:
-        # Tomcat complains on start if there is no JDK installed, but on Ubuntu
-        # 12.04 there is no JDK listed in its dependencies, so install a JDK
-        # manually.
-        - default-jdk
         - tomcat6
 
 - hosts: apache-tomcat6
-  sudo: yes
+  sudo: true
   tasks:
 
     - name: Increase Tomcat memory
-      lineinfile: dest=/etc/default/tomcat6 regexp='^(JAVA_OPTS=.*-Xmx)\d+[MmGg]?(.*)$' line='\g<1>1024m\g<2>'
-            state=present backrefs=yes backup=yes
-
-    - name: Create Tomcat web.xml with WebDAV enabled
-      template: src=web.xml.j2 dest=/etc/tomcat6/web.xml owner=root group=tomcat6 mode=0644 backup=yes 
+      lineinfile: >
+        dest=/etc/default/tomcat6
+        regexp='^(JAVA_OPTS=.*-Xmx)\d+[MmGg]?(.*)$'
+        line='\g<1>1024m\g<2>'
+        state=present
+        backrefs=yes
+        backup=yes
       notify: Restart Tomcat
 
-    - name: allow WebDAV to use ROOT directory for serving files
-      file: name=/var/lib/tomcat6/webapps/ROOT state=directory owner=tomcat6 mode=0750
+    - name: Use Oracle JRE 1.7
+      lineinfile: >
+        dest=/etc/default/tomcat6
+        insertafter='^#JAVA_HOME'
+        line='JAVA_HOME=/opt/java/64/jre1.7.0_51'
+        state=present
+        backup=yes
+      notify: Restart Tomcat
 
   handlers:
 

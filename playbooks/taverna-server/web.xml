@@ -3,11 +3,11 @@
     PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 
-<!-- Copyright (C) 2010-2011 The University of Manchester See the file "LICENSE.txt" 
+<!-- Copyright (C) 2010-2011 The University of Manchester See the file "LICENSE" 
 	for license terms. -->
-<web-app id="TAVSERV-2.4.1">
-	<display-name>Taverna 2.4.1 Server</display-name>
-	<description>This is the front-end engine for Taverna 2.4.1 Server.</description>
+<web-app id="TAVSERV-2.5.0">
+	<display-name>Taverna 2.5.0 Server</display-name>
+	<description>This is the front-end engine for Taverna 2.5.0 Server.</description>
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<!-- <param-value>WEB-INF/secure.xml</param-value> -->
@@ -24,9 +24,16 @@
 		<filter-name>springSecurityFilterChain</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-    <listener>
-        <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
-    </listener>
+	<listener>
+		<listener-class>
+			org.springframework.web.context.request.RequestContextListener
+		</listener-class>
+	</listener>
+	<listener>
+		<listener-class>
+			org.springframework.web.util.Log4jConfigListener
+		</listener-class>
+	</listener>
 	<listener>
 		<listener-class>
 			org.springframework.web.context.ContextLoaderListener
@@ -40,17 +47,6 @@
 			org.apache.cxf.transport.servlet.CXFServlet
 		</servlet-class>
 		<load-on-startup>1</load-on-startup>
-		<init-param>
-			<!-- 
-			Ensure that SERVICE_URI always contains the correct request details 
-			and hence that the URI displayed in the Taverna Server welcome page 
-			is correct.  Without this, CXF caches hostnames and hence users may 
-			see incorrect hostnames (e.g. localhost when viewing from a remote 
-			machine).
-			-->
-			<param-name>disable-address-updates</param-name>
-			<param-value>true</param-value>
-		</init-param>
 	</servlet>
 
 	<servlet-mapping>
@@ -68,5 +64,6 @@
 		<res-ref-name>mail/Session</res-ref-name>
 		<res-type>javax.mail.Session</res-type>
 		<res-auth>Container</res-auth>
+		<res-sharing-scope>Shareable</res-sharing-scope>
 	</resource-ref>
 </web-app>

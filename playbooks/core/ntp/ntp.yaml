@@ -1,12 +1,12 @@
 ---
-- hosts: ntp:&apt
-  sudo: yes
+- hosts: 'ntp:&apt'
+  sudo: true
   tasks:
     - name: Install ntp
       action: apt pkg=ntp state=present
 
 - hosts: ntp:&yum
-  sudo: yes
+  sudo: true
   tasks:
     - name: Install ntp
       action: yum name=ntp state=present
@@ -15,14 +15,20 @@
       template: src=step-tickers.j2 dest=/etc/ntp/step-tickers owner=root group=root mode=0644
 
 - hosts: ntp
-  sudo: yes
+  sudo: true
   vars_files:
-    - vars-{{ansible_pkg_mgr}}.yaml
+    - 'vars-{{ansible_pkg_mgr}}.yaml'
   tasks:
     - name: Update ntp.conf
-      template: src=ntp.conf.j2 dest=/etc/ntp.conf owner=root group=root mode=0644 backup=yes 
+      template: >
+        src=ntp.conf.j2
+        dest=/etc/ntp.conf
+        owner=root group=root mode=0644
+        backup=yes
       notify: Restart ntp server
 
   handlers:
     - name: Restart ntp server
-      service: name={{ntp_service}} state=restarted
+      service: >
+        name={{ntp_service}}
+        state=restarted

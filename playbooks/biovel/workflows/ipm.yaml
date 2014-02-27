@@ -3,16 +3,18 @@
 # The IPM workflow also requires json-simple to be installed in Taverna Server.
 # This is currently done in the DRW workflow play, so that must be run as well.
 - hosts: rserve
-  sudo: yes
+  sudo: true
   tasks:
     - name: Install R packages from CRAN
-      shell: echo "options(repos=structure(c(CRAN='{{ cran_repository }}/')));if(require({{ item }})){}else{install.packages('{{ item }}')}" | /usr/bin/R --no-save
+      shell: echo "options(repos=structure(c(CRAN='{{ cran_repository }}/')));if(require({{ item }})){}else{install.packages('{{ item }}');library({{ item }})}" | /usr/bin/R --no-save
       with_items:
         - lattice
         - Matrix
         - MASS
         - nlme
         - mvtnorm
+        - MCMCglmm
+        - truncnorm
         - IPMpack
       notify: R changed
 

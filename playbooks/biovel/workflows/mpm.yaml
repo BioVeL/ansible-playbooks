@@ -1,16 +1,47 @@
 ---
 # R packages for Matrix Population Modelling workflow
 - hosts: rserve
-  sudo: yes
+  sudo: true
   tasks:
     - name: Install R packages from CRAN
-      shell: echo "options(repos=structure(c(CRAN='{{ cran_repository }}/')));if(require({{ item }})){}else{install.packages('{{ item }}')}" | /usr/bin/R --no-save
+      shell: echo "options(repos=structure(c(CRAN='{{ cran_repository }}/')));if(require({{ item }})){}else{install.packages('{{ item }}');library({{ item }})}" | /usr/bin/R --no-save
       with_items:
         - quadprog
         - popbio
         - Matrix
         - expm
-        - popdemo
+        # - popdemo
+      notify: R changed
+
+  handlers:
+    - name: R changed
+      set_fact: r_changed=True
+
+# popdemo was in the above list, but due to a non-answering email support
+# address, has stopped being a supported CRAN package. So we need to use the
+# special "install unsupported R package" incantation
+
+# For devtools, we need to install some libraries first
+- hosts: rserve:&apt
+  sudo: true
+  tasks:
+    - name: Install CURL libraries
+      action: apt pkg={{item}} state=present
+      with_items:
+        - libcurl4-gnutls-dev
+
+- hosts: rserve
+  sudo: true
+  tasks:
+    - name: Install devtools package from CRAN
+      shell: echo "options(repos=structure(c(CRAN='{{ cran_repository }}/')));if(require({{ item }})){}else{install.packages('{{ item }}');library({{ item }})}" | /usr/bin/R --no-save
+      with_items:
+        - RCurl
+        - httr
+        - devtools
+
+    - name: Install popdemo package from CRAN archive
+      shell: echo "options(repos=structure(c(CRAN='{{ cran_repository }}/')));library(devtools);if(require(popdemo)){}else{install_url('http://cran.r-project.org/src/contrib/Archive/popdemo/popdemo_0.1-3.tar.gz');library(popdemo)}" | /usr/bin/R --no-save
       notify: R changed
 
   handlers:

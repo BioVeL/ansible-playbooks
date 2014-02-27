@@ -1,0 +1,21 @@
+---
+- name: Create auth directory
+  file: state=directory path=/etc/mail/authinfo mode=0750
+
+- name: Create Google Mail authorization file
+  template: src=gmail-auth.j2 dest=/etc/mail/authinfo/gmail-auth mode=0600
+  # notify: Reload sendmail
+
+- name: Hash Google Mail authorization file
+  shell: makemap hash gmail-auth < gmail-auth
+        chdir=/etc/mail/authinfo
+
+- name: Create sendmail.mc
+  copy: src=gmail-sendmail.mc dest=/etc/mail/sendmail.mc
+  # notify: Reload sendmail
+
+- name: Rebuild sendmail configuration
+  shell: make -C /etc/mail
+
+- name: Reload sendmail configuration
+  service: name=sendmail state=reloaded

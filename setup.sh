@@ -2,17 +2,15 @@
 
 GITHUB_ANSIBLE=github-ansible
 
-ANSIBLE=`which ansible`
-if [ -z "${ANSIBLE}" ] ; then
-  # no Ansible found, let's install one
-  if [ ! -d ${GITHUB_ANSIBLE} ] ; then
-    git clone https://github.com/ansible/ansible.git ${GITHUB_ANSIBLE}
-  fi
-  # Requires Ansible >= 1.3.0 because patch to add gem user_install flag didn't 
-  # make backwards-compatible behaviour the default
-  (cd ${GITHUB_ANSIBLE}; git checkout tags/v1.3.2)
-  source ${GITHUB_ANSIBLE}/hacking/env-setup
+if [ ! -d ${GITHUB_ANSIBLE} ] ; then
+	git clone https://github.com/ansible/ansible.git ${GITHUB_ANSIBLE}
 fi
+# Ensure all tags and commits are available
+(cd ${GITHUB_ANSIBLE}; git fetch)
+# Requires Ansible >= 9dec25854ea7b623cebd16fd6621ba39f592952d to install
+# libxslt-dev package correctly
+(cd ${GITHUB_ANSIBLE}; git checkout 9dec25854ea7b623cebd16fd6621ba39f592952d)
+source ${GITHUB_ANSIBLE}/hacking/env-setup
 
 if [ ! -r inventory/hosts ] ; then
   cp inventory/hosts-example inventory/hosts

@@ -6,10 +6,10 @@
 # On Ubuntu 12.04 ("precise") the standard repositories provide R 2.14
 # We require R 2.15, because e.g. [package popbio] requires [package quadprog] requires [R 2.15]
 # Up-to-date packages are maintained in a separate repository, which we add here.
-# The Ansible apt_repository module requires the apt-add-repository command from 
+# The Ansible apt_repository module requires the apt-add-repository command from
 # package python-software-properties
 - hosts: rOnUbuntu
-  sudo: yes
+  sudo: true
   tasks:
     - name: Add package python-software-properties
       apt: pkg=python-software-properties state=present
@@ -31,7 +31,7 @@
 # changed its name rapidly during these versions of the OS - Isadora requires liblzma1, Maya
 # requires liblzma5, and the intermediate OS's require intermediate versions of liblzma
 - hosts: rOnLinuxmint
-  sudo: yes
+  sudo: true
   vars_files:
     - [ "mint_{{ansible_distribution_release}}.yaml", "mint_default.yaml" ]
   tasks:
@@ -54,7 +54,7 @@
       apt: update_cache=yes
 
 - hosts: rbase:&apt
-  sudo: yes
+  sudo: true
   tasks:
 
     # This fact is used to create an inter-play handler. Anything which changes the state of the R
@@ -73,4 +73,4 @@
 
   handlers:
     - name: R changed
-      set_fact: r_changed=True    
+      set_fact: r_changed=True
