@@ -1,16 +1,16 @@
 ---
-- hosts: google-refine:&apt
+- hosts: 'google-refine:&apt'
   sudo: true
   tasks:
-    - name: Install CURL (used by refine init script)
+    - name: 'Install CURL (used by refine init script)'
       apt: pkg=curl state=present
 
 - hosts: google-refine
   vars:
-    google_refine_install: "{{base_folder}}/GoogleRefine"
-    google_refine_home: "{{base_folder}}/var/GoogleRefine"
-    google_refine_log: "{{base_folder}}/var/GoogleRefine"
-    google_refine_data: "{{base_folder}}/var/GoogleRefine/data"
+    google_refine_install: '{{base_folder}}/GoogleRefine'
+    google_refine_home: '{{base_folder}}/var/GoogleRefine'
+    google_refine_log: '{{base_folder}}/var/GoogleRefine'
+    google_refine_data: '{{base_folder}}/var/GoogleRefine/data'
     refine_changed:
   sudo: true
   tasks:
@@ -18,27 +18,45 @@
       group: name=refine system=yes state=present
 
     - name: Create a Refine user account
-      user: name=refine comment="Refine service" group=refine system=yes createhome=no home={{google_refine_home}} state=present
+      user: >
+        name=refine
+        comment='Refine service'
+        group=refine
+        system=yes
+        createhome=no
+        home={{google_refine_home}}
+        state=present
 
     - name: create Google Refine home directory
-      file: path={{google_refine_home}} state=directory owner=refine
+      file: >
+        path={{google_refine_home}}
+        state=directory
+        owner=refine
 
     - name: Create Google Refine install directory
-      file: path={{google_refine_install}} state=directory owner=refine
+      file: >
+        path={{google_refine_install}}
+        state=directory
+        owner=refine
 
     - name: Download Google Refine with BioVeL plugin
       sudo_user: refine
-      get_url: url=http://ww2.bgbm.org/biovel/public/refine/google-refine-2.6.0-r2602.tar.gz
-            dest={{google_refine_install}}/google-refine-2.6.0-r2602.tar.gz
+      get_url: >
+        url=http://ww2.bgbm.org/biovel/public/refine/google-refine-2.6.0-r2602.tar.gz
+        dest={{google_refine_install}}/google-refine-2.6.0-r2602.tar.gz
 
     - name: Unpack Google Refine
       sudo_user: refine
-      command: tar --extract --gunzip --directory={{google_refine_install}} --file={{google_refine_install}}/google-refine-2.6.0-r2602.tar.gz
-            creates={{google_refine_install}}/google-refine-2.6.0/refine
+      command: >
+        tar --extract --gunzip --directory={{google_refine_install}}
+          --file={{google_refine_install}}/google-refine-2.6.0-r2602.tar.gz
+        creates={{google_refine_install}}/google-refine-2.6.0/refine
 
     - name: Create refine start script
-      template: src=start-refine.j2 dest={{google_refine_install}}/google-refine-2.6.0/start-refine
-            owner=refine mode=0755
+      template: >
+        src=start-refine.j2
+        dest={{google_refine_install}}/google-refine-2.6.0/start-refine
+        owner=refine  mode=0755
 
     - name: create Google Refine log directory
       file: path={{google_refine_log}} state=directory owner=refine
@@ -47,7 +65,10 @@
       file: path={{google_refine_data}} state=directory owner=refine
 
     - name: setup Google Refine init script
-      template: src=refine-initd.j2 dest=/etc/init.d/refine owner=root group=root mode=0755
+      template: >
+        src=refine-initd.j2
+        dest=/etc/init.d/refine
+        owner=root  group=root  mode=0755
 
   handlers:
     - name: Restart Google Refine
@@ -55,14 +76,14 @@
       service: name=refine state=stopped
 
 # For systems that use update-rc.d, run the command manually to enable starting on reboot
-- hosts: google-refine:&apt
+- hosts: 'google-refine:&apt'
   sudo: true
   tasks:
     - name: Start Google Refine on reboot
       command: update-rc.d refine defaults
 
 # For other systems, use the service module.
-- hosts: google-refine:!apt
+- hosts: 'google-refine:!apt'
   sudo: true
   tasks:
     - name: Start Google Refine on reboot
