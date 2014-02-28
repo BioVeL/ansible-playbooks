@@ -1,19 +1,17 @@
 ---
 - hosts: taverna-server
   sudo: true
+  vars:
+    # 1.0.2 supports DRW v13
+    # 1.0.3 supports DRW v14
+    drwJarVersion: 1.0.3
   tasks:
     - name: Find Taverna Command Line lib directory
-      shell: /bin/ls -d {{taverna_server_install}}/WEB-INF/classes/util/taverna-commandline-2.*/lib
+      shell: >
+        /bin/ls -d {{taverna_server_install}}/WEB-INF/classes/util/taverna-commandline-2.*/lib
       register: taverna_server_cl_lib
 
-    - name: Install JSON-simple JAR
-      get_url: url=http://json-simple.googlecode.com/files/json-simple-1.1.1.jar
-          dest={{taverna_server_cl_lib.stdout}}/json-simple-1.1.1.jar
-
-    - name: Install Data Refinement Workflow dependencies
-      copy: src=DCWorkflow.jar
-            dest={{taverna_server_cl_lib.stdout}}/DCWorkflow.jar
-
-    - name: Install Data Refinement uber JAR
-      get_url: url=https://biovel.googlecode.com/svn/trunk/drf/lib/uber-drf-workflow-1.0.1-SNAPSHOT.jar
-          dest={{taverna_server_cl_lib.stdout}}/uber-drf-workflow-1.0.1-SNAPSHOT.jar
+    - name: Install Data Refinement JAR for DRW
+      get_url: >
+        url=http://cybertaxonomy.eu/mavenrepo/biovel/drf/drf-workflow/{{drwJarVersion}}/drf-workflow-{{drwJarVersion}}.jar
+        dest={{taverna_server_cl_lib.stdout}}/drf-workflow-{{drwJarVersion}}.jar
