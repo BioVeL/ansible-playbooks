@@ -20,3 +20,5 @@ biovel_portal_db_user: biovel
 biovel_portal_db_pass: 'biovel'
 
 biovel_portal_initial_data: none
+
+google_analytics_tracker_id: none

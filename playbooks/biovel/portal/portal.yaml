@@ -70,7 +70,8 @@
       # https://github.com/rubygems/rubygems/issues/139
       sudo_user: www-data
       shell: >
-        LANG=en_US.UTF-8 bundle install --deployment
+        LANG=en_US.UTF-8
+        bundle install --deployment
         chdir={{biovel_portal_install}}
 
     - name: create taverna_server.rb config file
@@ -80,6 +81,10 @@
         owner=www-data group=www-data mode=0600
 
     - name: add mail server to production.rb
+      # To avoid problems like getting blacklisted as a possible spam relay, we
+      # setup a valid email account using sendmail.  Here we configure the
+      # portal to use this config instead of direct SMTP.  This ensures
+      # Forgotten Password emails get through to the user.
       lineinfile: >
         dest={{biovel_portal_install}}/config/environments/production.rb
         insertafter='config.action_mailer.raise_delivery_errors'
@@ -87,9 +92,26 @@
         state=present
         backup=yes
 
+    - name: "add BioVeL's SEEK configuration"
+      # However, admin notifications about new users, etc, won't get through
+      # unless we also setup email in the SEEK portal.  SEEK doesn't provide an
+      # "official" way to modify this config, except for the admin user to
+      # change the settings via the browser.  To avoid needing to do that, we
+      # ignore their advice not to modify this default settings file.  Note, to
+      # get it working, we only need to enable email.  We don't need to fill in
+      # the email settings.  Also, take the opportunity to enable/disable a few
+      # other features
+      template: >
+        src=seek_configuration.rb.j2
+        dest={{biovel_portal_install}}/config/initializers/seek_configuration.rb
+        backup=yes
+
     - name: configure portal database connections
       sudo_user: www-data
-      template: src=database.yml.j2 dest={{biovel_portal_install}}/config/database.yml mode=0600
+      template: >
+        src=database.yml.j2
+        dest={{biovel_portal_install}}/config/database.yml
+        mode=0600
       notify: restart portal
 
     - name: precompile assets
@@ -97,8 +119,10 @@
       # TODO - assets only get precompiled when application.js does not exist - it would be nice to
       # re-run it when the Git repository gets updated
       sudo_user: www-data
-      command: bundle exec rake assets:precompile
-            chdir={{biovel_portal_install}} creates={{biovel_portal_install}}/public/assets/application.js
+      command: >
+        bundle exec rake assets:precompile
+        chdir={{biovel_portal_install}}
+        creates={{biovel_portal_install}}/public/assets/application.js
 
     # Stop Solr to ensure starting it does not fail
     - name: Stop Solr
@@ -112,24 +136,31 @@
     # Solr must be started before we try and seed the database.
     - name: Start Solr
       sudo_user: www-data
-      command: bundle exec rake RAILS_ENV=production sunspot:solr:start
-          chdir={{biovel_portal_install}}
+      command: >
+        bundle exec rake RAILS_ENV=production sunspot:solr:start
+        chdir={{biovel_portal_install}}
 
     # To create the database, first check the current migration status
     - name: Checking status of database
-      command: bundle exec rake RAILS_ENV=production db:migrate:status
-            chdir={{biovel_portal_install}}
+      command: >
+        bundle exec rake RAILS_ENV=production db:migrate:status
+        chdir={{biovel_portal_install}}
       register: biovel_portal_db_migration_status
 
     # If the database is empty (no migration status), and we have no data dump to initialise it,
     # then use db:setup (= db:schema:load followed by db:seed)
     - name: Create database seed file
       sudo_user: www-data
-      template: src=seeds.rb.j2 dest={{biovel_portal_install}}/db/seeds.rb mode=0600 backup=yes
+      template: >
+        src=seeds.rb.j2
+        dest={{biovel_portal_install}}/db/seeds.rb
+        mode=0600
+        backup=yes
 
     - name: Initial setup of database
-      command: bundle exec rake RAILS_ENV=production db:setup
-            chdir={{biovel_portal_install}}
+      command: >
+        bundle exec rake RAILS_ENV=production db:setup
+        chdir={{biovel_portal_install}}
       when: "biovel_portal_initial_data == 'none' and 'Schema migrations table does not exist yet' in biovel_portal_db_migration_status.stdout"
 
     # If the database is empty and we have a dump from another portal, import it into the database
