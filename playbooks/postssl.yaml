@@ -1,0 +1,26 @@
+---
+# this play adds SSL to a portal after initial installation.
+# We could probably just run site.yaml again, but we would need to ensure
+# all passwords were set correctly, etc.
+- hosts: amazon
+  tasks:
+    - name: Get EC2 facts
+      action: ec2_facts
+
+- hosts: all
+  tasks:
+    - group_by: key={{ ansible_pkg_mgr }}
+
+- hosts: apt
+  sudo: true
+  tasks:
+    - name: Update apt repository
+      apt: update_cache=yes cache_valid_time=3600
+
+- include: core/ntp/ntp.yaml
+# Common to Taverna Server and BioVeL Portal
+- include: external-ip/external-ip.yaml
+# Everything needed for BioVeL Portal
+- include: mail-transfer/sendmail.yml
+- include: apache-httpd/httpd.yaml
+- include: biovel/portal/postssl.yaml

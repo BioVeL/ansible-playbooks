@@ -1,0 +1,34 @@
+---
+- hosts: biovel-portal
+  sudo: true
+  tasks:
+    - name: enable Apache Expires module
+      # see http://guides.rubyonrails.org/asset_pipeline.html#far-future-expires-header
+      command: >
+        a2enmod expires
+        creates=/etc/apache2/mods-enabled/expires.load
+      notify: restart portal
+
+    - name: enable Apache Rewrite module
+      command: >
+        a2enmod rewrite
+        creates=/etc/apache2/mods-enabled/rewrite.load
+      notify: restart portal
+
+    - name: add Virtual Host to Apache
+      template: src=vhost.j2 dest=/etc/apache2/sites-available/tlite
+      notify: restart portal
+
+    - name: disable default site
+      command: a2dissite default
+          removes=/etc/apache2/sites-enabled/000-default
+      notify: restart portal
+
+    - name: enable Portal site
+      command: a2ensite tlite
+          creates=/etc/apache2/sites-enabled/tlite
+      notify: restart portal
+
+  handlers:
+    - name: restart portal
+      service: name=apache2 state=restarted
