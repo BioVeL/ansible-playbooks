@@ -11,16 +11,7 @@
   tasks:
     - group_by: key={{ ansible_pkg_mgr }}
 
-- hosts: apt
-  sudo: true
-  tasks:
-    - name: Update apt repository
-      apt: update_cache=yes cache_valid_time=3600
-
 - include: core/ntp/ntp.yaml
-# Common to Taverna Server and BioVeL Portal
 - include: external-ip/external-ip.yaml
-# Everything needed for BioVeL Portal
-- include: mail-transfer/sendmail.yml
 - include: apache-httpd/httpd.yaml
 - include: biovel/portal/postssl.yaml
