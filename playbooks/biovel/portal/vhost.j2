@@ -47,12 +47,20 @@
     # but we want to avoid redirecting Javascript, etc, and slowing down loading
     # of run pages. So only redirect on pages explicitly known to work using
     # HTTPS.
+    #
+    # Note that speed is not the only reason to avoid redirecting Javascript.
+    # There was also a problem (SERVINF-396) where the redirection delayed
+    # fetching a script, and an error occurred due to an undefined variable.
+    # We didn't figure out why that would happen (Javascript evaluation occurs
+    # in the listed order, even if redirection occurs), but not redirecting
+    # fixed the problem.
+    #
     # Top-level page:
     RewriteRule ^/$ https://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]
     # Top-level Runs page:
-    RewriteRule ^/runs/$ https://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]
+    RewriteRule ^/runs/?$ https://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]
     # Most other sections:
-    RewriteRule ^/(admin|people|workflows)/ https://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]    
+    RewriteRule ^/(admin|people|workflows) https://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]    
 {%     else %} {#- apache_port == 443 #}
     # Redirect /runs/* to HTTP
     RewriteRule ^/runs/. http://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]
