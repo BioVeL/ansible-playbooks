@@ -3,7 +3,11 @@
   file: state=directory path=/etc/mail/authinfo mode=0750
 
 - name: Create Google Mail authorization file
-  template: src=gmail-auth.j2 dest=/etc/mail/authinfo/gmail-auth mode=0600
+  template: >
+  	src=gmail-auth.j2
+  	dest=/etc/mail/authinfo/gmail-auth
+  	owner=root
+  	mode=0600
   # notify: Reload sendmail
 
 - name: Hash Google Mail authorization file
