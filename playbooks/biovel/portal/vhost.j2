@@ -41,7 +41,6 @@
 
 {%   if secure_apache %}
     RewriteEngine On
-    RewriteCond %{REQUEST_METHOD} !=POST
 {%     if apache_port == 80 %}
     # Redirect to HTTPS. We want to convert back to HTTPS as early as possible,
     # but we want to avoid redirecting Javascript, etc, and slowing down loading
@@ -56,13 +55,17 @@
     # fixed the problem.
     #
     # Top-level page:
+    RewriteCond %{REQUEST_METHOD} !=POST
     RewriteRule ^/$ https://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]
     # Top-level Runs page:
+    RewriteCond %{REQUEST_METHOD} !=POST
     RewriteRule ^/runs/?$ https://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]
     # Most other sections:
-    RewriteRule ^/(admin|people|workflows) https://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]    
+    RewriteCond %{REQUEST_METHOD} !=POST
+    RewriteRule ^/(admin|contact|people|workflows) https://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]    
 {%     else %} {#- apache_port == 443 #}
     # Redirect /runs/* to HTTP
+    RewriteCond %{REQUEST_METHOD} !=POST
     RewriteRule ^/runs/. http://{{apache_https["hostname"]}}%{REQUEST_URI} [R,L]
 
     SSLEngine on
