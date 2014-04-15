@@ -1,0 +1,21 @@
+# BioVeL Portal logrotate config
+
+rotate 7
+daily
+compress
+missingok
+dateext
+
+{{biovel_portal_log}}/production.log {{biovel_portal_log}}/delayed_job.log {
+  copytruncate
+}
+
+{{biovel_portal_log}}/access.log {{biovel_portal_log}}/error.log {
+  delaycompress
+  notifempty
+  create 640 root root
+  sharedscripts
+  postrotate
+    /etc/init.d/apache2 reload > /dev/null
+  endscript
+}

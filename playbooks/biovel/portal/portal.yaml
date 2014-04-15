@@ -213,6 +213,14 @@
         -i {{taverna_server_max_running}} --queue=default start
         chdir={{biovel_portal_install}}
 
+    - name: setup log rotation
+      template: >
+        src=logrotate.conf.j2
+        dest=/etc/logrotate.d/biovel-portal
+        owner=root
+        group=root
+        mode=0644
+
     - name: install Passenger
       gem: name=passenger state=present user_install=no
 
