@@ -1,16 +1,18 @@
 # BioVeL Portal logrotate config
 
-rotate 7
-daily
-compress
-missingok
-dateext
-
 {{biovel_portal_log}}/production.log {{biovel_portal_log}}/delayed_job.log {
+  rotate 7
+  daily
+  compress
+  missingok
   copytruncate
 }
 
 {{biovel_portal_log}}/access.log {{biovel_portal_log}}/error.log {
+  rotate 7
+  daily
+  compress
+  missingok
   delaycompress
   notifempty
   create 640 root root
