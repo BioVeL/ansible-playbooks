@@ -1,0 +1,47 @@
+#!/bin/sh
+#
+# /etc/init.d/biovel-portal -- startup script for the BioVeL Portal services
+#
+### BEGIN INIT INFO
+# Provides:          biovel-portal
+# Required-Start:    $local_fs $remote_fs $network
+# Required-Stop:     $local_fs $remote_fs $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Manage BioVeL Portal services.
+# Description:       Manage the BioVeL Portal workers and solr.
+### END INIT INFO
+
+
+. /lib/lsb/init-functions
+
+PATH=/bin:/usr/bin:/sbin:/usr/sbin
+PORTAL_INSTALL={{biovel_portal_install}}
+PORTAL_WORKERS={{taverna_server_max_running}}
+
+case "$1" in
+  start)
+    cd ${PORTAL_INSTALL}
+    RAILS_ENV=production bundle exec rake sunspot:solr:start
+    RAILS_ENV=production bundle exec rake seek:workers:start[${PORTAL_WORKERS}]
+    ;;
+  stop)
+    cd ${PORTAL_INSTALL}
+    RAILS_ENV=production bundle exec rake sunspot:solr:stop
+    RAILS_ENV=production bundle exec rake seek:workers:stop
+    ;;
+  restart|force-reload)
+    $0 stop
+    $0 start
+    ;;
+  status)
+    cd ${PORTAL_INSTALL}
+    RAILS_ENV=production bundle exec rake seek:workers:status
+    ;;
+  *)
+    log_success_msg "Usage: $0 {start|stop|restart}"
+    exit 1
+    ;;
+esac
+
+exit 0

@@ -221,6 +221,12 @@
         group=root
         mode=0644
 
+    - name: setup Portal init script
+      template: >
+        src=portal-initd.j2
+        dest=/etc/init.d/biovel-portal
+        owner=root  group=root  mode=0755
+
     - name: install Passenger
       gem: name=passenger state=present user_install=no
 
@@ -272,3 +278,23 @@
   handlers:
     - name: restart portal
       service: name=apache2 state=restarted
+
+# For systems that use update-rc.d, run the command manually to enable starting on reboot
+- hosts: 'biovel-portal:&apt'
+  sudo: true
+  tasks:
+    - name: Start BioVeL Portal services on reboot
+      command: update-rc.d biovel-portal defaults
+
+# For other systems, use the service module.
+- hosts: 'biovel-portal:!apt'
+  sudo: true
+  tasks:
+    - name: Start BioVeL Portal services on reboot
+      service: name=biovel-portal enabled=yes
+
+- hosts: biovel-portal
+  sudo: true
+  tasks:
+    - name: Start BioVeL Portal services
+      service: name=biovel-portal state=started
