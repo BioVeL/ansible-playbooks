@@ -184,35 +184,6 @@
         bundle exec rake RAILS_ENV=production db:migrate
         chdir={{biovel_portal_install}}
 
-    # TODO - we need to ensure these workers are started at boot time
-    # we also need to restart them if they are running. Easiest is just to
-    # stop then start them. Stopping them if they are already stopped is OK.
-    # We can stop all workers in one go.
-    - name: stop workers
-      sudo_user: www-data
-      shell: >
-        RAILS_ENV=production bundle exec ./script/delayed_job stop
-        chdir={{biovel_portal_install}}
-
-    # We need to start the workers in two groups as we have Taverna Player
-    # workers and a SEEK worker.
-    - name: start taverna player workers
-      sudo_user: www-data
-      shell: >
-        RAILS_ENV=production bundle exec ./script/delayed_job
-        -n {{taverna_server_max_running}} --queue=player start
-        chdir={{biovel_portal_install}}
-
-    # Note here that we specify the SEEK worker id (with -i) to be one greater
-    # than the id of the last Taverna Player worker (which are numbered from 0)
-    # otherwise it won't start!
-    - name: start seek worker
-      sudo_user: www-data
-      shell: >
-        RAILS_ENV=production bundle exec ./script/delayed_job
-        -i {{taverna_server_max_running}} --queue=default start
-        chdir={{biovel_portal_install}}
-
     - name: setup log rotation
       template: >
         src=logrotate.conf.j2
@@ -278,6 +249,10 @@
   handlers:
     - name: restart portal
       service: name=apache2 state=restarted
+
+    - name: Restart BioVeL Portal services
+      # actually, just stop service, as the start below will restart it
+      service: name=biovel-portal state=stopped
 
 # For systems that use update-rc.d, run the command manually to enable starting on reboot
 - hosts: 'biovel-portal:&apt'
