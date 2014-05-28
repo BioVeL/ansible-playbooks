@@ -24,6 +24,7 @@ case "$1" in
     cd ${PORTAL_INSTALL}
     RAILS_ENV=production bundle exec rake sunspot:solr:start
     RAILS_ENV=production bundle exec rake seek:workers:start[${PORTAL_WORKERS}]
+    touch tmp/restart.txt
     ;;
   stop)
     cd ${PORTAL_INSTALL}
