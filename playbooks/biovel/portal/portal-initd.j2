@@ -39,7 +39,7 @@ case "$1" in
     RAILS_ENV=production bundle exec rake seek:workers:status
     ;;
   *)
-    log_success_msg "Usage: $0 {start|stop|restart|force-reload}"
+    log_success_msg "Usage: $0 {start|stop|restart|force-reload|status}"
     exit 1
     ;;
 esac
