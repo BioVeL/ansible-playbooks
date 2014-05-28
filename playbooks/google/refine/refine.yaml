@@ -2,8 +2,12 @@
 - hosts: 'google-refine:&apt'
   sudo: true
   tasks:
-    - name: 'Install CURL (used by refine init script)'
-      apt: pkg=curl state=present
+    - name: Install Google Refine dependencies
+      action: apt pkg={{item}} state=present
+      with_items:
+        - curl     # CURL required by Refine init script
+        - git      # Git to download Refine and BioVeL extension
+        - openjdk-6-jdk
 
 - hosts: google-refine
   vars:
@@ -39,23 +43,55 @@
         state=directory
         owner=refine
 
-    - name: Download Google Refine with BioVeL plugin
+    - name: Clone Google Refine code from Github
       sudo_user: refine
-      get_url: >
-        url=http://ww2.bgbm.org/biovel/public/refine/google-refine-2.6.0-r2602.tar.gz
-        dest={{google_refine_install}}/google-refine-2.6.0-r2602.tar.gz
+      git: >
+        repo=https://github.com/OpenRefine/OpenRefine.git
+        dest={{google_refine_install}}/OpenRefine
+        version=tags/v1.0.7
 
-    - name: Unpack Google Refine
+    - name: Clone Refine BioVeL extension code from Github
       sudo_user: refine
-      command: >
-        tar --extract --gunzip --directory={{google_refine_install}}
-          --file={{google_refine_install}}/google-refine-2.6.0-r2602.tar.gz
-        creates={{google_refine_install}}/google-refine-2.6.0/refine
+      git: >
+        repo=https://github.com/BioVeL/refine-ext.git
+        dest={{google_refine_install}}/refine-ext
+        version=afd58db14f03229e46fc8e8e340cade1aef801d5
+
+    - name: Create a link to extension
+      sudo_user: refine
+      file: >
+        state=link
+        src={{google_refine_install}}/refine-ext
+        dest={{google_refine_install}}/OpenRefine/extensions/biovel
+
+    - name: Add BioVeL extension build to OpenRefine
+      sudo_user: refine
+      lineinfile: >
+        dest={{google_refine_install}}/OpenRefine/extensions/build.xml
+        insertafter='<echo message="Building extensions" />'
+        line='    <ant dir="biovel/" target="build" />'
+        state=present
+        backup=yes
+
+    - name: Add BioVeL extension clean to OpenRefine
+      sudo_user: refine
+      lineinfile: >
+        dest={{google_refine_install}}/OpenRefine/extensions/build.xml
+        insertafter='<echo message="cleaning extensions" />'
+        line='    <ant dir="biovel/" target="clean" />'
+        state=present
+
+    - name: Build OpenRefine
+      sudo_user: refine
+      shell: >
+        JAVA_HOME=/usr/lib/jvm/java-6-openjdk-amd64
+        ./refine build
+        chdir={{google_refine_install}}/OpenRefine
 
     - name: Create refine start script
       template: >
         src=start-refine.j2
-        dest={{google_refine_install}}/google-refine-2.6.0/start-refine
+        dest={{google_refine_install}}/OpenRefine/start-refine
         owner=refine  mode=0755
 
     - name: create Google Refine log directory
