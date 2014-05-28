@@ -81,6 +81,15 @@
         line='    <ant dir="biovel/" target="clean" />'
         state=present
 
+    - name: Remove unneeded Linked Data extensions
+      with_items:
+        - freebase  # Freebase is broken - see https://github.com/OpenRefine/OpenRefine/wiki/Reconciliation
+        - crowdsourcing
+      lineinfile: >
+        dest={{google_refine_install}}/OpenRefine/extensions/build.xml
+        regexp='<ant dir="{{item}}/" target="build" />'
+        state=absent
+
     - name: Build OpenRefine
       sudo_user: refine
       shell: >
