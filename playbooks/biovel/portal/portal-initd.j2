@@ -24,6 +24,7 @@ case "$1" in
     cd ${PORTAL_INSTALL}
     RAILS_ENV=production bundle exec rake sunspot:solr:start
     RAILS_ENV=production bundle exec rake seek:workers:start[${PORTAL_WORKERS}]
+    touch tmp/restart.txt
     ;;
   stop)
     cd ${PORTAL_INSTALL}
@@ -39,7 +40,7 @@ case "$1" in
     RAILS_ENV=production bundle exec rake seek:workers:status
     ;;
   *)
-    log_success_msg "Usage: $0 {start|stop|restart|force-reload}"
+    log_success_msg "Usage: $0 {start|stop|restart|force-reload|status}"
     exit 1
     ;;
 esac
