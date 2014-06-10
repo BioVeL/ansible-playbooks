@@ -22,14 +22,14 @@ PORTAL_WORKERS={{taverna_server_max_running}}
 case "$1" in
   start)
     cd ${PORTAL_INSTALL}
-    RAILS_ENV=production bundle exec rake sunspot:solr:start
-    RAILS_ENV=production bundle exec rake seek:workers:start[${PORTAL_WORKERS}]
+    sudo -u www-data RAILS_ENV=production bundle exec rake sunspot:solr:start
+    sudo -u www-data RAILS_ENV=production bundle exec rake seek:workers:start[${PORTAL_WORKERS}]
     touch tmp/restart.txt
     ;;
   stop)
     cd ${PORTAL_INSTALL}
-    RAILS_ENV=production bundle exec rake sunspot:solr:stop
-    RAILS_ENV=production bundle exec rake seek:workers:stop
+    sudo -u www-data RAILS_ENV=production bundle exec rake sunspot:solr:stop
+    sudo -u www-data RAILS_ENV=production bundle exec rake seek:workers:stop
     ;;
   restart|force-reload)
     $0 stop
@@ -37,7 +37,7 @@ case "$1" in
     ;;
   status)
     cd ${PORTAL_INSTALL}
-    RAILS_ENV=production bundle exec rake seek:workers:status
+    sudo -u www-data RAILS_ENV=production bundle exec rake seek:workers:status
     ;;
   *)
     log_success_msg "Usage: $0 {start|stop|restart|force-reload|status}"
