@@ -26,8 +26,15 @@
 - hosts: oracle-java-jre
   sudo: true
   tasks:
+    - name: Get JRE path
+      shell: ls -d /opt/java/64/jre1.7.0* | tail -1
+      register: oracle_jre_ls
+
+    - name: Set JRE path
+      set_fact: oracle_jre_path="{{oracle_jre_ls.stdout}}"
+
     - name: Copy JCE local policy file
-      copy: src=JCE/UnlimitedJCEPolicy/local_policy.jar dest=/opt/java/64/jre1.7.0_55/lib/security/local_policy.jar backup=yes
+      copy: src=JCE/UnlimitedJCEPolicy/local_policy.jar dest={{oracle_jre_path}}/lib/security/local_policy.jar backup=yes
 
     - name: Copy JCE US export policy file
-      copy: src=JCE/UnlimitedJCEPolicy/US_export_policy.jar dest=/opt/java/64/jre1.7.0_55/lib/security/US_export_policy.jar backup=yes
+      copy: src=JCE/UnlimitedJCEPolicy/US_export_policy.jar dest={{oracle_jre_path}}/lib/security/US_export_policy.jar backup=yes
