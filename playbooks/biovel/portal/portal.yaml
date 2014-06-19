@@ -118,7 +118,7 @@
 
     # Ubuntu-specific command!
     - name: Start Solr on reboot
-      command: update-rc.d biovel-portal defaults
+      command: update-rc.d biovel-solr defaults
 
     # Solr must be started before we seed the database.
     - name: Ensure Solr is started
