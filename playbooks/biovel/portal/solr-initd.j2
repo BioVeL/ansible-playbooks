@@ -1,0 +1,62 @@
+#!/bin/sh
+#
+# /etc/init.d/biovel-solr -- startup script for the BioVeL Solr services
+#
+### BEGIN INIT INFO
+# Provides:          biovel-solr
+# Required-Start:    $local_fs $remote_fs $network
+# Required-Stop:     $local_fs $remote_fs $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Manage BioVeL Portal services.
+# Description:       Manage the BioVeL Portal workers and solr.
+### END INIT INFO
+
+
+. /lib/lsb/init-functions
+
+PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin
+PORTAL_INSTALL={{biovel_portal_install}}
+PID_FILE=${PORTAL_INSTALL}/solr/pids/production/sunspot-solr-production.pid
+
+case "$1" in
+  start)
+    cd ${PORTAL_INSTALL}
+    # No need to check current status, as Rake command checks if Solr is running
+    sudo -u www-data RAILS_ENV=production bundle exec rake sunspot:solr:start
+    ;;
+  stop)
+    cd ${PORTAL_INSTALL}
+    sudo -u www-data RAILS_ENV=production bundle exec rake sunspot:solr:stop
+    ;;
+  restart|force-reload)
+    $0 stop
+    $0 start
+    ;;
+  status)
+    cd ${PORTAL_INSTALL}
+    # status exit codes from
+    # http://refspecs.linuxbase.org/LSB_4.1.0/LSB-Core-generic/LSB-Core-generic/iniscrptact.html
+    if [ -r ${PID_FILE} ]; then
+      pid=`cat ${PID_FILE}`
+      sudo -u www-data kill -0 "${pid}"
+      status=$?
+      if [ ${status} -eq 0 ]; then
+        # www-data user can send signals to Solr - Solr is running
+        exit 0
+      else
+        # Solr not running but pid file exists
+        exit 1
+      fi
+    else
+      # PID file does not exist and Solr is not running
+      exit 3
+    fi
+    ;;
+  *)
+    log_success_msg "Usage: $0 {start|stop|restart|force-reload|status}"
+    exit 1
+    ;;
+esac
+
+exit 0

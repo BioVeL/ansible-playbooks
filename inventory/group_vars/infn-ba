@@ -1,0 +1,6 @@
+---
+ntp_hosts:
+  - 0.it.pool.ntp.org
+  - 1.it.pool.ntp.org
+
+cran_repository: 'http://cran.stat.unipd.it/'

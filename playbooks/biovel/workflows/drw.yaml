@@ -8,7 +8,7 @@
   tasks:
     - name: Find Taverna Command Line lib directory
       shell: >
-        /bin/ls -d {{taverna_server_install}}/WEB-INF/classes/util/taverna-commandline-2.*/lib
+        /bin/ls -d {{taverna_server_install}}/WEB-INF/classes/util/taverna-commandline-*/lib
       register: taverna_server_cl_lib
 
     - name: Install Data Refinement JAR for DRW

@@ -92,20 +92,6 @@
         state=present
         backup=yes
 
-    - name: "add BioVeL's SEEK configuration"
-      # However, admin notifications about new users, etc, won't get through
-      # unless we also setup email in the SEEK portal.  SEEK doesn't provide an
-      # "official" way to modify this config, except for the admin user to
-      # change the settings via the browser.  To avoid needing to do that, we
-      # ignore their advice not to modify this default settings file.  Note, to
-      # get it working, we only need to enable email.  We don't need to fill in
-      # the email settings.  Also, take the opportunity to enable/disable a few
-      # other features
-      template: >
-        src=seek_configuration.rb.j2
-        dest={{biovel_portal_install}}/config/initializers/seek_configuration.rb
-        backup=yes
-
     - name: configure portal database connections
       sudo_user: www-data
       template: >
@@ -124,21 +110,19 @@
         chdir={{biovel_portal_install}}
         creates={{biovel_portal_install}}/public/assets/application.js
 
-    # Stop Solr to ensure starting it does not fail
-    - name: Stop Solr
-      sudo_user: www-data
-      command: >
-        bundle exec rake RAILS_ENV=production sunspot:solr:stop
-        chdir={{biovel_portal_install}}
-        removes={{biovel_portal_install}}/solr/pids/production/sunspot-solr-production.pid
-      ignore_errors: true
+    - name: Install Solr init.d script
+      template: >
+        src=solr-initd.j2
+        dest=/etc/init.d/biovel-solr
+        owner=root  group=root  mode=0755
 
-    # Solr must be started before we try and seed the database.
-    - name: Start Solr
-      sudo_user: www-data
-      command: >
-        bundle exec rake RAILS_ENV=production sunspot:solr:start
-        chdir={{biovel_portal_install}}
+    # Ubuntu-specific command!
+    - name: Start Solr on reboot
+      command: update-rc.d biovel-portal defaults
+
+    # Solr must be started before we seed the database.
+    - name: Ensure Solr is started
+      service: name=biovel-solr state=started
 
     # To create the database, first check the current migration status
     - name: Checking status of database

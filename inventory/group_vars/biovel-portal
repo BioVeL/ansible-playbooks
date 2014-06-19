@@ -1,7 +1,7 @@
 ---
 # Which version to checkout of BitBucket - this can be default, a named branch
 # or tag, or a SHA
-biovel_portal_version: be1aa0a
+biovel_portal_version: 7e53a35
 
 biovel_portal_install: '{{base_folder}}/BioVeLPortal'
 biovel_portal_log: '{{base_folder}}/BioVeLPortal/log'

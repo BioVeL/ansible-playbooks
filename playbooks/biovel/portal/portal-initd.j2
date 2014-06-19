@@ -22,13 +22,11 @@ PORTAL_WORKERS={{taverna_server_max_running}}
 case "$1" in
   start)
     cd ${PORTAL_INSTALL}
-    sudo -u www-data RAILS_ENV=production bundle exec rake sunspot:solr:start
+    # No need to check current status, as Rake command checks if workers are running
     sudo -u www-data RAILS_ENV=production bundle exec rake seek:workers:start[${PORTAL_WORKERS}]
-    touch tmp/restart.txt
     ;;
   stop)
     cd ${PORTAL_INSTALL}
-    sudo -u www-data RAILS_ENV=production bundle exec rake sunspot:solr:stop
     sudo -u www-data RAILS_ENV=production bundle exec rake seek:workers:stop
     ;;
   restart|force-reload)
@@ -37,7 +35,9 @@ case "$1" in
     ;;
   status)
     cd ${PORTAL_INSTALL}
-    sudo -u www-data RAILS_ENV=production bundle exec rake seek:workers:status
+    # Exits with 0 if instances are running (count = 0)
+    # Exits with 1 if no instances are running (count = 1)
+    exit `sudo -u www-data RAILS_ENV=production bundle exec rake seek:workers:status | grep -c 'no instances running'`
     ;;
   *)
     log_success_msg "Usage: $0 {start|stop|restart|force-reload|status}"
