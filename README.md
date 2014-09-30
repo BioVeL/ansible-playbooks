@@ -161,3 +161,14 @@ $ ansible-playbook -c ssh -i inventory/hosts playbooks/site.yaml
 ```
 
 To configure a single host, append the flag `--limit <hostname>`
+
+## Running via Cloud-Init
+
+On cloud-init enabled cloud (such as Amazon and EGI Federated Cloud), you
+can start a portal instance using a cloud-init user data script which starts
+the ansible deployment locally and setup the portal environment.
+
+Sample cloud-init user data is located in the `cloudinit` folder. To start
+the deployment download the file, edit it with your SSH key (for accessing
+the newly created VM) and put the text into the "user data" during VM
+creation.

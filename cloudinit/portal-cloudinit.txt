@@ -1,0 +1,102 @@
+Content-Type: multipart/mixed; boundary="===============4393449873403893838=="
+MIME-Version: 1.0
+
+--===============4393449873403893838==
+Content-Type: text/cloud-config; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="userdata.txt"
+
+#cloud-config
+users:
+  - name: bioveladm
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    lock-passwd: true
+    ssh-import-id: bioveladm
+    ssh-authorized-keys:
+      - <your SSH public key>
+
+--===============4393449873403893838==
+Content-Type: text/x-shellscript; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="deploy.sh"
+
+#!/bin/bash
+#This script will download BioVeL Ansible playbook and setup a recepy
+#for installing the BioVel Portal (test) service
+
+#Log output for debug
+echo "Logging output to /tmp/deployment.log"
+exec &>/tmp/deployment.log
+
+#Install pre-requisites
+echo "Installing pre-requisites..."
+apt-get update
+apt-get install -y gawk git python-yaml python-jinja2 unzip curl
+
+#Download ansible playbook
+echo "Installing ansible..."
+git clone https://github.com/BioVeL/ansible-playbooks
+cd ansible-playbooks
+source setup.sh
+
+#Create an ansible recepy
+echo "Creating ansible recepy..."
+cat << EOF > inventory/hosts 
+[infn-ba]
+test ansible_ssh_host=test.biovel.eu
+[taverna-server]
+test
+# Rserve, accessible only to local clients
+[rserve-local]
+test
+# Rserve, accessible to remote network clients
+[rserve-remote]
+[biovel-portal]
+test
+[taverna-workbench]
+[google-refine]
+[virt:children]
+infn-ba
+[phys:children]
+[apache-httpd:children]
+biovel-portal
+[apache-tomcat6:children]
+taverna-server
+[oracle-java-jre:children]
+apache-tomcat6
+taverna-workbench
+[mysql-server:children]
+biovel-portal
+[ntp:children]
+infn-ba
+[rserve:children]
+rserve-local
+rserve-remote
+[rbase:children]
+rserve
+[external-ip:children]
+biovel-portal
+taverna-server
+EOF
+
+#Download Oracle Policy (if needed)
+if [[ -d "playbooks/oracle-java/JCE/" && ! -d playbooks/oracle-java/JCE/UnlimitedJCEPolicy ]]; then
+  echo "Downloading Oracle Policy..."
+  curl -L --cookie 'oraclelicense=accept-securebackup-cookie;' http://download.oracle.com/otn-pub/java/jce/7/UnlimitedJCEPolicyJDK7.zip -o /tmp/policy.zip
+  cd playbooks/oracle-java/JCE/
+  unzip /tmp/policy.zip
+  rm -f /tmp/policy.zip
+  cd - %>/dev/null
+fi
+
+#Run ansible playbook
+echo "Running ansible playbook..."
+ansible-playbook -c local -i inventory/hosts playbooks/site.yaml
+
+#Deployment completed
+echo "Deployment completed"
+exit 0
+
+--===============4393449873403893838==--
