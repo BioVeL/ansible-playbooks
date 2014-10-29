@@ -121,6 +121,7 @@ guest_user.save
 guest_user.person.work_groups << guest_workgroup
 puts 'Seeded the Guest user.'
 
+{% if rserve_users is defined %}
 TavernaPlayer::ServiceCredential.create(
   :name => 'R Server on localhost',
   :description => 'R Server',
@@ -130,6 +131,7 @@ TavernaPlayer::ServiceCredential.create(
   :password_confirmation => '{{rserve_users[0]["pass"]}}'
 )
 puts 'Seeded the R server credential'
+{% endif %}
 
 puts "Done."
 
