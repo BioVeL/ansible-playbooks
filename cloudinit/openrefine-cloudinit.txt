@@ -58,25 +58,13 @@ egi
 # Do not edit below here - this provides dependencies of the above groups
 [egi:children]
 egi-refine
-[oracle-java-jre:children]
-google-refine
 [ntp:children]
 egi
 [apache-httpd:children]
 google-refine
-[apache-tomcat6:children]
+[apache-tomcat7:children]
 google-refine
 EOF
-
-#Download Oracle Policy (if needed)
-if [[ -d "playbooks/oracle-java/JCE/" && ! -d playbooks/oracle-java/JCE/UnlimitedJCEPolicy ]]; then
-  echo "Downloading Oracle Policy..."
-  curl -L --cookie 'oraclelicense=accept-securebackup-cookie;' http://download.oracle.com/otn-pub/java/jce/7/UnlimitedJCEPolicyJDK7.zip -o /tmp/policy.zip
-  cd playbooks/oracle-java/JCE/
-  unzip /tmp/policy.zip
-  rm -f /tmp/policy.zip
-  cd - %>/dev/null
-fi
 
 #Run ansible playbook
 echo "Running ansible playbook..."

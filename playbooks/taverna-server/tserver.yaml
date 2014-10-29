@@ -3,7 +3,7 @@
   sudo: true
   tasks:
     - name: Create Taverna Server install directory
-      file: path={{taverna_server_install}} state=directory owner=tomcat6
+      file: path={{taverna_server_install}} state=directory owner=tomcat7
 
     - name: Download Taverna Server
       get_url: url=https://launchpad.net/taverna-server/2.5.x/2.5.4/+download/TavernaServer-2.5.4.war
@@ -17,23 +17,23 @@
       notify: Restart Tomcat
 
     - name: copy Taverna Server users properties file
-      template: src=users.properties.j2 dest={{taverna_server_install}}/WEB-INF/security/users.properties owner=tomcat6 mode=0600 backup=yes
+      template: src=users.properties.j2 dest={{taverna_server_install}}/WEB-INF/security/users.properties owner=tomcat7 mode=0600 backup=yes
 
     - name: copy Taverna Server properties file
       template: src=tavernaserver.properties.j2 dest={{taverna_server_install}}/WEB-INF/tavernaserver.properties backup=yes
       notify: Restart Tomcat
 
     - name: create Taverna Server log directory
-      file: path={{taverna_server_log}} state=directory owner=tomcat6
+      file: path={{taverna_server_log}} state=directory owner=tomcat7
 
     - name: create Taverna Server log configuration
       template: src=log4j.properties.j2 dest={{taverna_server_install}}/WEB-INF/classes/log4j.properties
             backup=yes
 
     - name: create Taverna Server context in Tomcat
-      template: src=tserver.xml.j2 dest=/etc/tomcat6/Catalina/localhost/{{taverna_server_context}}.xml owner=tomcat6
+      template: src=tserver.xml.j2 dest=/etc/tomcat7/Catalina/localhost/{{taverna_server_context}}.xml owner=tomcat7
       notify: Restart Tomcat
 
   handlers:
     - name: Restart Tomcat
-      service: name=tomcat6 state=restarted
+      service: name=tomcat7 state=restarted

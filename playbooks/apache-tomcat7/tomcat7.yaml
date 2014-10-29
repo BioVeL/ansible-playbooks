@@ -1,20 +1,28 @@
 ---
-- hosts: 'apache-tomcat6:&apt'
+- hosts: 'apache-tomcat7:&apt'
   sudo: true
   tasks:
 
-    - name: Install Tomcat 6
+    - name: Install Tomcat 7
       apt: 'pkg={{item}} state=present'
       with_items:
-        - tomcat6
+        - openjdk-7-jre-headless
+        - tomcat7
 
-- hosts: apache-tomcat6
+    - name: Get JRE path
+      shell: ls -d /usr/lib/jvm/java-7* | tail -1
+      register: jre_7_ls
+
+    - name: Set JRE path
+      set_fact: jre_7_path="{{jre_7_ls.stdout}}"
+
+- hosts: apache-tomcat7
   sudo: true
   tasks:
 
     - name: Increase Tomcat memory
       lineinfile: >
-        dest=/etc/default/tomcat6
+        dest=/etc/default/tomcat7
         regexp='^(JAVA_OPTS=.*-Xmx)\d+[MmGg]?(.*)$'
         line='\g<1>1024m\g<2>'
         state=present
@@ -22,11 +30,11 @@
         backup=yes
       notify: Restart Tomcat
 
-    - name: Use Oracle JRE 1.7
+    - name: Use OpenJDK 7 JRE
       lineinfile: >
-        dest=/etc/default/tomcat6
+        dest=/etc/default/tomcat7
         insertafter='^#JAVA_HOME'
-        line='JAVA_HOME={{oracle_jre_path}}'
+        line='JAVA_HOME={{jre_7_path}}'
         state=present
         backup=yes
       notify: Restart Tomcat
@@ -34,4 +42,4 @@
   handlers:
 
     - name: Restart Tomcat
-      service: name=tomcat6 state=restarted
+      service: name=tomcat7 state=restarted

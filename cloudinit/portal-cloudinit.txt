@@ -43,7 +43,7 @@ source setup.sh
 
 #Create an ansible recepy
 echo "Creating ansible recepy..."
-cat << EOF > inventory/hosts 
+cat << EOF > inventory/hosts
 [infn-ba]
 test ansible_ssh_host=test.biovel.eu
 [taverna-server]
@@ -62,11 +62,8 @@ infn-ba
 [phys:children]
 [apache-httpd:children]
 biovel-portal
-[apache-tomcat6:children]
+[apache-tomcat7:children]
 taverna-server
-[oracle-java-jre:children]
-apache-tomcat6
-taverna-workbench
 [mysql-server:children]
 biovel-portal
 [ntp:children]
@@ -80,16 +77,6 @@ rserve
 biovel-portal
 taverna-server
 EOF
-
-#Download Oracle Policy (if needed)
-if [[ -d "playbooks/oracle-java/JCE/" && ! -d playbooks/oracle-java/JCE/UnlimitedJCEPolicy ]]; then
-  echo "Downloading Oracle Policy..."
-  curl -L --cookie 'oraclelicense=accept-securebackup-cookie;' http://download.oracle.com/otn-pub/java/jce/7/UnlimitedJCEPolicyJDK7.zip -o /tmp/policy.zip
-  cd playbooks/oracle-java/JCE/
-  unzip /tmp/policy.zip
-  rm -f /tmp/policy.zip
-  cd - %>/dev/null
-fi
 
 #Run ansible playbook
 echo "Running ansible playbook..."

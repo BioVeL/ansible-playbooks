@@ -46,12 +46,8 @@ amazon-eu-west
 [apache-httpd:children]
 biovel-portal
 
-[apache-tomcat6:children]
+[apache-tomcat7:children]
 taverna-server
-
-[oracle-java-jre:children]
-apache-tomcat6
-taverna-workbench
 
 [mysql-server:children]
 biovel-portal
