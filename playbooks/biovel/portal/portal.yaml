@@ -15,7 +15,7 @@
         - imagemagick
         - libmagickcore-dev
         - libmagickwand-dev
-        - mercurial      # to obtain portal source code
+        - git            # to obtain portal source code
         - python-mysqldb # required for Ansible mysql modules
 
     - name: Force ruby 1.9 to be default ruby
@@ -54,10 +54,10 @@
 
     - name: Get portal code
       sudo_user: www-data
-      hg: >
-        repo=https://bitbucket.org/fbacall/biovel-portal
+      git: >
+        repo=https://github.com/BioVeL/seek.git
         dest={{biovel_portal_install}}
-        revision={{biovel_portal_version}}
+        version={{biovel_portal_version}}
       notify: restart portal
 
     - name: install Ruby dependencies using bundler
