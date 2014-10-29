@@ -142,6 +142,7 @@
         backup=yes
 
     - name: Initial setup of database
+      sudo_user: www-data
       command: >
         bundle exec rake RAILS_ENV=production db:setup
         chdir={{biovel_portal_install}}
