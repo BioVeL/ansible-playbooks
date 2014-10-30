@@ -24,7 +24,7 @@ Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment; filename="deploy.sh"
 
 #!/bin/bash
-#This script will download BioVeL Ansible playbook and setup a recepy
+#This script will download BioVeL Ansible playbook and setup a recipe
 #for installing the BioVel OpenRefine service
 
 #Log output for debug
@@ -42,8 +42,8 @@ git clone https://github.com/BioVeL/ansible-playbooks
 cd ansible-playbooks
 source setup.sh
 
-#Create an ansible recepy
-echo "Creating ansible recepy..."
+#Create an ansible recipe
+echo "Creating ansible recipe..."
 cat << EOF > inventory/hosts
 [egi-refine]
 refine  ansible_ssh_host=127.0.0.1  ansible_ssh_user=cloudadm
@@ -51,19 +51,26 @@ refine  ansible_ssh_host=127.0.0.1  ansible_ssh_user=cloudadm
 # Open Refine, accessible to remote network clients
 [google-refine]
 refine
+
 # Indicate whether groups contain physical or virtual machines
 [virt:children]
 egi
+
 [phys:children]
+
 # Do not edit below here - this provides dependencies of the above groups
 [egi:children]
 egi-refine
+
 [ntp:children]
 egi
+
 [apache-httpd:children]
 google-refine
+
 [apache-tomcat7:children]
 google-refine
+
 EOF
 
 #Run ansible playbook
@@ -76,6 +83,7 @@ cat << EOF > /etc/apache2/sites-available/refine
 ProxyPass / http://127.0.0.1:3333/
 ProxyPassReverse / http://127.0.0.1:3333/
 EOF
+
 a2enmod proxy_http
 a2enmod ssl
 a2ensite refine
