@@ -52,6 +52,22 @@ echo "Creating ansible recipe..."
 mkdir -p playbooks/group_vars
 
 #
+# GENERAL CONFIGURATION. PLEASE CHECK AND EDIT AS REQUIRED.
+#
+
+cat << ALLEOF > playbooks/group_vars/all
+---
+# The email address of your sysadmin for the Portal.
+sysadmin_email: support@biovel.eu
+
+# The top-level directory containing the BioVeL tools and services. Each
+# subsystem has its own directory which will be a sub-directory of this one.
+# Typical values here would be /opt or /mnt
+base_folder: /opt
+
+ALLEOF
+
+#
 # PORTAL CONFIGURATION. PLEASE CHECK AND EDIT AS REQUIRED.
 #
 
