@@ -8,6 +8,11 @@ Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment; filename="userdata.txt"
 
 #cloud-config
+
+#
+# USER CONFIGURATION. PLEASE CHECK AND EDIT AS REQUIRED.
+#
+
 users:
   - name: bioveladm
     sudo: ALL=(ALL) NOPASSWD:ALL
@@ -23,41 +28,116 @@ Content-Transfer-Encoding: 7bit
 Content-Disposition: attachment; filename="deploy.sh"
 
 #!/bin/bash
-#This script will download BioVeL Ansible playbook and setup a recipe
-#for installing the BioVel Portal (test) service
+# This script will download the BioVeL Ansible playbooks and setup a recipe
+# for installing the BioVel Portal service
 
-#Log output for debug
+# Log output for debug
 echo "Logging output to /tmp/deployment.log"
 exec &>/tmp/deployment.log
 
-#Install pre-requisites
+# Install pre-requisites
 echo "Installing pre-requisites..."
 apt-get update
 apt-get install -y gawk git python-yaml python-jinja2 unzip curl
 
-#Download ansible playbook
+# Download ansible playbook
 echo "Installing ansible..."
 git clone https://github.com/BioVeL/ansible-playbooks
 cd ansible-playbooks
 source setup.sh
 
-#Create an ansible recipe
+# Create an ansible recipe
 echo "Creating ansible recipe..."
-cat << EOF > inventory/hosts
+
+mkdir -p playbooks/group_vars
+
+#
+# PORTAL CONFIGURATION. PLEASE CHECK AND EDIT AS REQUIRED.
+#
+
+cat << PORTALEOF > playbooks/group_vars/biovel-portal
+---
+# Which version of the portal to checkout of GitHub - this can be HEAD, a
+# named branch, a tag or a full 40 character SHA-1 hash.
+biovel_portal_version: 1.5
+
+# Admin user credentials
+biovel_portal_admin_user: admin
+biovel_portal_admin_email: support@biovel.eu
+biovel_portal_admin_pass: biovel
+
+# Email credentails for portal use
+biovel_portal_gmail_user: biovel.eu@gmail.com
+biovel_portal_gmail_pass: biovel
+
+# Portal database credentials
+biovel_portal_db_user: biovel
+biovel_portal_db_pass: biovel
+
+# If you need analytics, add your code here
+google_analytics_tracker_id: none
+
+PORTALEOF
+
+#
+# TAVERNA CONFIGURATION. PLEASE CHECK AND EDIT AS REQUIRED.
+#
+
+cat << TAVERNAEOF > playbooks/group_vars/taverna-server
+---
+# Taverna server user credentials
+taverna_server_user: taverna
+taverna_server_pass: taverna
+
+# The maximum time in minutes that a workflow may run (1440 = 1 day)
+taverna_server_workflow_lifetime: 1440
+
+# The maximum number of resident (initialized, running or finished) workflows
+taverna_server_max_resident: 50
+
+# The maximum number of concurrently running workflows
+taverna_server_max_running: 10
+
+TAVERNAEOF
+
+#
+# R CONFIGURATION. PLEASE CHECK AND EDIT AS REQUIRED.
+#
+
+cat << REOF > playbooks/group_vars/rserve
+---
+# Rserve user credentials
+rserve_users:
+  - user: biovel
+    pass: biovel
+
+REOF
+
+#
+# HOST CONFIGURATION. PLEASE CHECK AND EDIT AS REQUIRED.
+#
+
+cat << HOSTSEOF > inventory/hosts
+
+# Change the hostname here
 [infn-ba]
-test ansible_ssh_host=test.biovel.eu
+build ansible_ssh_host=test.biovel.eu
 
 [taverna-server]
-test
+build
 
 # Rserve, accessible only to local clients
 [rserve-local]
-test
+build
 
 [biovel-portal]
-test
+build
 
-# Do not edit below here - this provides dependencies of the above groups
+#
+# DO NOT EDIT BELOW HERE.
+# THIS CONFIGURES THE DEPENDENCIES OF THE ABOVE GROUPS.
+#
+
 [virt:children]
 infn-ba
 
@@ -83,13 +163,13 @@ rserve
 biovel-portal
 taverna-server
 
-EOF
+HOSTSEOF
 
-#Run ansible playbook
+# Run ansible playbook
 echo "Running ansible playbook..."
 ansible-playbook -c local -i inventory/hosts playbooks/site.yaml
 
-#Deployment completed
+# Deployment completed
 echo "Deployment completed"
 exit 0
 
