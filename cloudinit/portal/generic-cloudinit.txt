@@ -163,7 +163,7 @@ build
 #
 
 [virt:children]
-infn-ba
+all
 
 [apache-httpd:children]
 biovel-portal
@@ -175,7 +175,7 @@ taverna-server
 biovel-portal
 
 [ntp:children]
-infn-ba
+all
 
 [rserve:children]
 rserve-local
