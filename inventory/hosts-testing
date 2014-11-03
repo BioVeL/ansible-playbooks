@@ -3,7 +3,7 @@
 #
 
 [travis-testing]
-test
+test ansible_ssh_host=test.biovel.eu
 
 #
 # Add hosts to the following groups to enable services
