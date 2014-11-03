@@ -10,3 +10,6 @@ install:
 script:
   # Check the playbook's syntax.
   - "ansible-playbook -i inventory/hosts-testing playbooks/site.yaml --syntax-check"
+
+  # Run the playbook with ansible-playbook.
+  - "ansible-playbook -i inventory/hosts-testing playbooks/site.yaml -c local --sudo"
