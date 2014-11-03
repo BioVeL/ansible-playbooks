@@ -18,3 +18,9 @@ script:
 
   # Run the playbook with ansible-playbook.
   - "ansible-playbook -i inventory/hosts-testing playbooks/site.yaml -c local --sudo"
+
+  # Requests to make sure httpd, Portal, Tomcat and Taverna respond.
+  - "curl --retry 3 --connect-timeout 5 --max-time 120 http://localhost/"
+  - "curl --retry 3 --connect-timeout 5 --max-time 120 http://localhost/workflows"
+  - "curl --retry 3 --connect-timeout 5 --max-time 120 http://localhost:8080/"
+  - "curl --retry 3 --connect-timeout 5 --max-time 120 http://localhost:8080/tserver/rest"
