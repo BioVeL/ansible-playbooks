@@ -1,0 +1,7 @@
+# A group for testing in the Travis environment.
+
+---
+ntp_hosts:
+  - europe.pool.ntp.org
+
+cran_repository: 'http://www.stats.bris.ac.uk/R'
