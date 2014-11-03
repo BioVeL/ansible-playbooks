@@ -55,7 +55,7 @@ mkdir -p playbooks/group_vars
 # GENERAL CONFIGURATION. PLEASE CHECK AND EDIT AS REQUIRED.
 #
 
-cat << ALLEOF > playbooks/group_vars/all
+cat << GENERICEOF > playbooks/group_vars/generic
 ---
 # The email address of your sysadmin for the Portal.
 sysadmin_email: support@biovel.eu
@@ -73,7 +73,7 @@ ntp_hosts:
 # Where to get R packages from. Set this to something local if possible.
 cran_repository: 'http://www.stats.bris.ac.uk/R'
 
-ALLEOF
+GENERICEOF
 
 #
 # PORTAL CONFIGURATION. PLEASE CHECK AND EDIT AS REQUIRED.
@@ -144,7 +144,7 @@ REOF
 cat << HOSTSEOF > inventory/hosts
 
 # Change the hostname here
-[all]
+[generic]
 build ansible_ssh_host=test.biovel.eu
 
 [taverna-server]
@@ -163,7 +163,7 @@ build
 #
 
 [virt:children]
-all
+generic
 
 [apache-httpd:children]
 biovel-portal
@@ -175,7 +175,7 @@ taverna-server
 biovel-portal
 
 [ntp:children]
-all
+generic
 
 [rserve:children]
 rserve-local
