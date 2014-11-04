@@ -69,12 +69,12 @@
       # Ubuntu does not have any locale set. See
       # https://github.com/rubygems/rubygems/issues/139
       #
-      # "bundle config build.nokogiri --use-system-libraries" ensures that we
-      # don't spend ages building XML libraries that are already installed.
+      # "NOKOGIRI_USE_SYSTEM_LIBRARIES=1" ensures that we don't spend ages
+      # building XML libraries that are already installed.
       sudo_user: www-data
       shell: >
         LANG=en_US.UTF-8
-        bundle config build.nokogiri --use-system-libraries
+        NOKOGIRI_USE_SYSTEM_LIBRARIES=1
         bundle install --deployment
         chdir={{biovel_portal_install}}
 
