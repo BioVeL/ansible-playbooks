@@ -1,0 +1,26 @@
+---
+language: python
+python: "2.7"
+
+before_install:
+  # Work around Apt GIS bug https://github.com/travis-ci/travis-ci/issues/2683 
+  - sudo mv /etc/apt/sources.list.d/pgdg-source.list* /tmp
+  - sudo add-apt-repository -y ppa:ubuntugis/ubuntugis-unstable
+  - sudo apt-get update -qq
+
+install:
+  - sudo apt-get install -qqy gawk curl
+  - pip install ansible
+
+script:
+  # Check the playbook's syntax.
+  - "ansible-playbook -i inventory/hosts-testing playbooks/site.yaml --syntax-check"
+
+  # Run the playbook with ansible-playbook.
+  - "ansible-playbook -i inventory/hosts-testing playbooks/site.yaml -c local --sudo"
+
+  # Requests to make sure httpd, Portal, Tomcat and Taverna respond.
+  - "curl --retry 3 --connect-timeout 5 --max-time 120 http://localhost/"
+  - "curl --retry 3 --connect-timeout 5 --max-time 120 http://localhost/workflows"
+  - "curl --retry 3 --connect-timeout 5 --max-time 120 http://localhost:8080/"
+  - "curl --retry 3 --connect-timeout 5 --max-time 120 http://localhost:8080/tserver/rest"

@@ -1,0 +1,55 @@
+#
+# Define your host in an appropriate "location"
+#
+
+[travis-testing]
+test ansible_ssh_host=test.biovel.eu
+
+#
+# Add hosts to the following groups to enable services
+#
+
+[taverna-server]
+test
+
+# Rserve, accessible only to local clients
+[rserve-local]
+test
+
+[biovel-portal]
+test
+
+#
+# Indicate whether groups contain physical or virtual machines
+#
+
+[virt:children]
+travis-testing
+
+[phys:children]
+
+#
+# Do not edit below here - this provides dependencies of the above groups
+#
+
+[apache-httpd:children]
+biovel-portal
+
+[apache-tomcat7:children]
+taverna-server
+
+[mysql-server:children]
+biovel-portal
+
+[ntp:children]
+travis-testing
+
+[rserve:children]
+rserve-local
+
+[rbase:children]
+rserve
+
+[external-ip:children]
+biovel-portal
+taverna-server
