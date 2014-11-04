@@ -68,9 +68,13 @@
       # contains non-ASCII characters, but Ruby thinks locale is ASCII because
       # Ubuntu does not have any locale set. See
       # https://github.com/rubygems/rubygems/issues/139
+      #
+      # "bundle config build.nokogiri --use-system-libraries" ensures that we
+      # don't spend ages building XML libraries that are already installed.
       sudo_user: www-data
       shell: >
         LANG=en_US.UTF-8
+        bundle config build.nokogiri --use-system-libraries
         bundle install --deployment
         chdir={{biovel_portal_install}}
 
