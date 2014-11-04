@@ -4,7 +4,8 @@
   vars:
     # 1.0.2 supports DRW v13
     # 1.0.3 supports DRW v14
-    drwJarVersion: 1.0.3
+    # 1.0.5 supports DRW v16
+    drwJarVersion: 1.0.5
   tasks:
     - name: Find Taverna Command Line lib directory
       shell: >
