@@ -25,6 +25,7 @@
 - include: biovel/workflows/osd.yaml
 - include: biovel/workflows/psw.yaml
 - include: biovel/workflows/whales.yaml
+- include: biovel/workflows/sound.yaml
 - include: rserve/rserve.yaml
 # Taverna Workbench
 - include: taverna-workbench/workbench.yaml
