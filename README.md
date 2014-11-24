@@ -1,12 +1,13 @@
 # Ansible configuration for BioVeL servers
 
+Build scripts test status: [![Build Status](https://travis-ci.org/BioVeL/ansible-playbooks.svg?branch=master)](https://travis-ci.org/BioVeL/ansible-playbooks)
 
 ## Requirements
 
-These playbooks are tested on Ubuntu 12.04.  There are likely to be issues 
+These playbooks are tested on Ubuntu 12.04.  There are likely to be issues
 using later versions of Ubuntu or other distributions.
 
-There are definitely problems awaiting users of non-APT distributions - all 
+There are definitely problems awaiting users of non-APT distributions - all
 the plays using `&apt` will need an equivalent for these other distributions.
 
 For Portal versions 0.8, checkout the branch `master`.
@@ -42,7 +43,7 @@ From the directory containing this README, run the command:
 $ source setup.sh
 ```
 
-This will install Ansible if required, and create additional files, such as a 
+This will install Ansible if required, and create additional files, such as a
 hosts file.
 
 
@@ -56,8 +57,8 @@ e.g. for a host called `portalhost.example.com`:
 portalhost ansible_ssh_host=portalhost.example.com
 ```
 
-Then add the short name under the groups to indicate which services you wish 
-to deploy on the host, e.g. for a basic portal supporting workflows using 
+Then add the short name under the groups to indicate which services you wish
+to deploy on the host, e.g. for a basic portal supporting workflows using
 local Rserve and Google Refine:
 
 ```
@@ -82,28 +83,28 @@ portalhost
 
 ## Override default passwords
 
-The files contained in the repository contain default usernames and passwords 
-for services and databases.  You can use these, but anyone with access to the 
+The files contained in the repository contain default usernames and passwords
+for services and databases.  You can use these, but anyone with access to the
 Github repository will know the passwords.
 
-For additional security, copy the `group_vars` directory to the `playbooks` 
+For additional security, copy the `group_vars` directory to the `playbooks`
 directory. e.g. `inventory/group_vars` -> `playbooks/group_vars` and override
 the passwords.
 
-If a host called `portalhost` is in the `biovel-portal` group, the default 
-username and password for the portal's database will be obtained from 
+If a host called `portalhost` is in the `biovel-portal` group, the default
+username and password for the portal's database will be obtained from
 `group_vars/biovel-portal`.
 
-You can also create a host-specific file `playbooks/host_vars/portalhost` to 
+You can also create a host-specific file `playbooks/host_vars/portalhost` to
 override group definitions.  Do not add these files to the repository!
 
 
 ## Create a portal secured by a certificate
 
-To create a secure Apache server, add certificate and key files to the Ansible 
+To create a secure Apache server, add certificate and key files to the Ansible
 directory `playbooks/apache-httpd/secure`
 
-Create the file `playbooks/host_vars/<hostname>`, where `<hostname>` is the 
+Create the file `playbooks/host_vars/<hostname>`, where `<hostname>` is the
 short name in the `hosts` file. Add the lines:
 ```
 apache_https:
@@ -139,7 +140,7 @@ $ sudo /opt/BioVeLPortal/datactl.sh save tlite-prod data-20131024.zip
 Transfer the file `<data-zipfile>` to your local host, and put it in the Ansible
 directory `playbooks/biovel/portal/data/`
 
-Create the file `playbooks/host_vars/<hostname>`, where `<hostname>` is the 
+Create the file `playbooks/host_vars/<hostname>`, where `<hostname>` is the
 short name in the `hosts` file. Add the line:
 ```
 biovel_portal_initial_data: data/<data-zipfile>
