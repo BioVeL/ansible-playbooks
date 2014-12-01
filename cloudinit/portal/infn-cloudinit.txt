@@ -75,7 +75,7 @@ cat << PORTALEOF > playbooks/group_vars/biovel-portal
 ---
 # Which version of the portal to checkout of GitHub - this can be HEAD, a
 # named branch, a tag or a full 40 character SHA-1 hash.
-biovel_portal_version: 1.6
+biovel_portal_version: 1.6.1
 
 # Admin user credentials
 biovel_portal_admin_user: admin
